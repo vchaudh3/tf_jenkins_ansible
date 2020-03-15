@@ -2,13 +2,13 @@ Proposed Solution:
 -----------------
 1. IaC (Terraform): 
 
-a. Automate provision of INFRA (EC2 + EBS Volume for Jenkins installation + VPC + Subnet + Route Tables + IGW + Security groups)
+  a. Automate provision of INFRA (EC2 + EBS Volume for Jenkins installation + VPC + Subnet + Route Tables + IGW + Security groups)
 
-b. Automate basic CloudWatch monitoring + SNS
+  b. Automate basic CloudWatch monitoring + SNS
 
 2. Configuration Management (Ansible) [user data, along with Python]
 
-a. Automate deployment of CI (Jenkins) [user data, along with Java]
+  a. Automate deployment of CI (Jenkins) [user data, along with Java]
 
 
 Pre-requisites:
