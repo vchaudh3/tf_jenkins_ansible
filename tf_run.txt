@@ -1,0 +1,1861 @@
+Using username "root".
+Authenticating with public key "rsa-key-20161123"
+Welcome to Ubuntu 16.04 LTS (GNU/Linux 4.4.0-28-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com/
+
+139 packages can be updated.
+1 update is a security update.
+
+
+*** System restart required ***
+Last login: Sat Mar 14 21:31:28 2020 from 172.31.192.20
+root@VM-101576942:~#
+root@VM-101576942:~#
+root@VM-101576942:~#
+root@VM-101576942:~#
+root@VM-101576942:~# cd git/tf_jenkins_ansible
+root@VM-101576942:~/git/tf_jenkins_ansible# ls -lrt
+total 112
+-rw-r--r-- 1 root root    41 Mar 14 12:19 README.md
+-rw-r--r-- 1 root root    46 Mar 14 12:19 provider.tf
+-rw-r--r-- 1 root root    80 Mar 14 12:19 output.tf
+-rw-r--r-- 1 root root   164 Mar 14 12:19 key.tf
+-rw-r--r-- 1 root root   370 Mar 14 12:19 cloudinit.tf
+-rw-r--r-- 1 root root  2607 Mar 14 12:19 vpc.tf
+-rw-r--r-- 1 root root    46 Mar 14 12:19 versions.tf
+-rw-r--r-- 1 root root   152 Mar 14 12:19 s3.tf
+-rw-r--r-- 1 root root   399 Mar 14 12:20 mykey.pub
+-rw------- 1 root root  1675 Mar 14 12:20 mykey
+drwxr-xr-x 2 root root  4096 Mar 14 21:11 scripts
+-rw-r--r-- 1 root root  2220 Mar 14 21:46 instance.tf
+-rw-r--r-- 1 root root  1294 Mar 14 21:55 securitygroup.tf
+drwxr-xr-x 2 root root  4096 Mar 14 23:07 playbooks
+-rw-r--r-- 1 root root    78 Mar 14 23:13 hosts.ini
+-rw-r--r-- 1 root root   624 Mar 14 23:35 sns_topic.tf
+-rw-r--r-- 1 root root   555 Mar 14 23:53 vars.tf
+-rw-r--r-- 1 root root  1148 Mar 14 23:57 cw.tf
+-rw-r--r-- 1 root root 35591 Mar 15 01:11 terraform.tfstate.backup
+-rw-r--r-- 1 root root   159 Mar 15 01:12 terraform.tfstate
+root@VM-101576942:~/git/tf_jenkins_ansible# terraform init
+There are some problems with the configuration, described below.
+
+The Terraform configuration must be valid before initialization so that
+Terraform can determine which modules and providers need to be installed.
+
+Error: Error parsing /root/git/tf_jenkins_ansible/cloudinit.tf: At 2:14: Unknown token: 2:14 IDENT file
+
+
+root@VM-101576942:~/git/tf_jenkins_ansible# /usr/bin/terraform.v0.12.23 init
+
+Initializing the backend...
+
+Initializing provider plugins...
+
+The following providers do not have any version constraints in configuration,
+so the latest version was installed.
+
+To prevent automatic upgrades to new major versions that may contain breaking
+changes, it is recommended to add version = "..." constraints to the
+corresponding provider blocks in configuration, with the constraint strings
+suggested below.
+
+* provider.aws: version = "~> 2.53"
+* provider.template: version = "~> 2.1"
+
+Terraform has been successfully initialized!
+
+You may now begin working with Terraform. Try running "terraform plan" to see
+any changes that are required for your infrastructure. All Terraform commands
+should now work.
+
+If you ever set or change modules or backend configuration for Terraform,
+rerun this command to reinitialize your working directory. If you forget, other
+commands will detect it and remind you to do so if necessary.
+root@VM-101576942:~/git/tf_jenkins_ansible# /usr/bin/terraform.v0.12.23 plan
+Refreshing Terraform state in-memory prior to plan...
+The refreshed state will be used to calculate this plan, but will not be
+persisted to local or remote state storage.
+
+data.template_file.jenkins-init: Refreshing state...
+data.template_cloudinit_config.cloudinit-jenkins: Refreshing state...
+
+------------------------------------------------------------------------
+
+An execution plan has been generated and is shown below.
+Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # aws_cloudwatch_metric_alarm.cpu-utilization will be created
+  + resource "aws_cloudwatch_metric_alarm" "cpu-utilization" {
+      + actions_enabled                       = true
+      + alarm_actions                         = (known after apply)
+      + alarm_description                     = "This metric monitors ec2 cpu utilization"
+      + alarm_name                            = "high-cpu-utilization-alarm"
+      + arn                                   = (known after apply)
+      + comparison_operator                   = "GreaterThanOrEqualToThreshold"
+      + dimensions                            = (known after apply)
+      + evaluate_low_sample_count_percentiles = (known after apply)
+      + evaluation_periods                    = 2
+      + id                                    = (known after apply)
+      + metric_name                           = "CPUUtilization"
+      + namespace                             = "AWS/EC2"
+      + period                                = 120
+      + statistic                             = "Average"
+      + threshold                             = 1
+      + treat_missing_data                    = "missing"
+    }
+
+  # aws_cloudwatch_metric_alarm.instance-health-check will be created
+  + resource "aws_cloudwatch_metric_alarm" "instance-health-check" {
+      + actions_enabled                       = true
+      + alarm_actions                         = (known after apply)
+      + alarm_description                     = "This metric monitors ec2 health status"
+      + alarm_name                            = "instance-health-check"
+      + arn                                   = (known after apply)
+      + comparison_operator                   = "GreaterThanOrEqualToThreshold"
+      + dimensions                            = (known after apply)
+      + evaluate_low_sample_count_percentiles = (known after apply)
+      + evaluation_periods                    = 1
+      + id                                    = (known after apply)
+      + metric_name                           = "StatusCheckFailed"
+      + namespace                             = "AWS/EC2"
+      + period                                = 120
+      + statistic                             = "Average"
+      + threshold                             = 1
+      + treat_missing_data                    = "missing"
+    }
+
+  # aws_ebs_volume.jenkins-data will be created
+  + resource "aws_ebs_volume" "jenkins-data" {
+      + arn               = (known after apply)
+      + availability_zone = "eu-west-1a"
+      + encrypted         = (known after apply)
+      + id                = (known after apply)
+      + iops              = (known after apply)
+      + kms_key_id        = (known after apply)
+      + size              = 20
+      + snapshot_id       = (known after apply)
+      + tags              = {
+          + "Name" = "jenkins-data"
+        }
+      + type              = "gp2"
+    }
+
+  # aws_instance.jenkins-instance will be created
+  + resource "aws_instance" "jenkins-instance" {
+      + ami                          = "ami-844e0bf7"
+      + arn                          = (known after apply)
+      + associate_public_ip_address  = (known after apply)
+      + availability_zone            = (known after apply)
+      + cpu_core_count               = (known after apply)
+      + cpu_threads_per_core         = (known after apply)
+      + get_password_data            = false
+      + host_id                      = (known after apply)
+      + id                           = (known after apply)
+      + instance_state               = (known after apply)
+      + instance_type                = "t2.medium"
+      + ipv6_address_count           = (known after apply)
+      + ipv6_addresses               = (known after apply)
+      + key_name                     = "mykeypair"
+      + network_interface_id         = (known after apply)
+      + password_data                = (known after apply)
+      + placement_group              = (known after apply)
+      + primary_network_interface_id = (known after apply)
+      + private_dns                  = (known after apply)
+      + private_ip                   = (known after apply)
+      + public_dns                   = (known after apply)
+      + public_ip                    = (known after apply)
+      + security_groups              = (known after apply)
+      + source_dest_check            = true
+      + subnet_id                    = (known after apply)
+      + tenancy                      = (known after apply)
+      + user_data                    = "57ba6e2307cb99c861893c18c053c09148ff06b6"
+      + volume_tags                  = (known after apply)
+      + vpc_security_group_ids       = (known after apply)
+
+      + ebs_block_device {
+          + delete_on_termination = (known after apply)
+          + device_name           = (known after apply)
+          + encrypted             = (known after apply)
+          + iops                  = (known after apply)
+          + kms_key_id            = (known after apply)
+          + snapshot_id           = (known after apply)
+          + volume_id             = (known after apply)
+          + volume_size           = (known after apply)
+          + volume_type           = (known after apply)
+        }
+
+      + ephemeral_block_device {
+          + device_name  = (known after apply)
+          + no_device    = (known after apply)
+          + virtual_name = (known after apply)
+        }
+
+      + network_interface {
+          + delete_on_termination = (known after apply)
+          + device_index          = (known after apply)
+          + network_interface_id  = (known after apply)
+        }
+
+      + root_block_device {
+          + delete_on_termination = (known after apply)
+          + encrypted             = (known after apply)
+          + iops                  = (known after apply)
+          + kms_key_id            = (known after apply)
+          + volume_id             = (known after apply)
+          + volume_size           = (known after apply)
+          + volume_type           = (known after apply)
+        }
+    }
+
+  # aws_internet_gateway.main-gw will be created
+  + resource "aws_internet_gateway" "main-gw" {
+      + id       = (known after apply)
+      + owner_id = (known after apply)
+      + tags     = {
+          + "Name" = "main"
+        }
+      + vpc_id   = (known after apply)
+    }
+
+  # aws_key_pair.mykeypair will be created
+  + resource "aws_key_pair" "mykeypair" {
+      + fingerprint = (known after apply)
+      + id          = (known after apply)
+      + key_name    = "mykeypair"
+      + key_pair_id = (known after apply)
+      + public_key  = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDCBbkxQZdFXOwZ6kfgHDaptfJztYTWLwcQKaf4CabBFBGjeoNOm7NNbEjlEWnyWGDDwNRDWV1cnUG8rlfPP4s4iDmdM4yiijz45P80za659Rl0yNuttpTR3YPd0BwlnVnrBC/W1A/BpPiknQNP1zI7rt1WZ5VcTI9xP9hY1uUharjht2aZhkCbZGMF2dO4rtnJDBRlNlzltglgfJfZVPwDnsHSMZDSDH5hv3vQuzW4Xa7eHNdothmX7qK/2BoFccSiCWw38jVTjHkpVnuMow3hUQ4IZnDgFbkZI5Ux6/9u94EXoPvLwLFMkGM9iv1hvJO80KEKpnFsIZaMtfp3xjpV root@VM-101576942"
+    }
+
+  # aws_route_table.main-public will be created
+  + resource "aws_route_table" "main-public" {
+      + id               = (known after apply)
+      + owner_id         = (known after apply)
+      + propagating_vgws = (known after apply)
+      + route            = [
+          + {
+              + cidr_block                = "0.0.0.0/0"
+              + egress_only_gateway_id    = ""
+              + gateway_id                = (known after apply)
+              + instance_id               = ""
+              + ipv6_cidr_block           = ""
+              + nat_gateway_id            = ""
+              + network_interface_id      = ""
+              + transit_gateway_id        = ""
+              + vpc_peering_connection_id = ""
+            },
+        ]
+      + tags             = {
+          + "Name" = "main-public-1"
+        }
+      + vpc_id           = (known after apply)
+    }
+
+  # aws_route_table_association.main-public-1-a will be created
+  + resource "aws_route_table_association" "main-public-1-a" {
+      + id             = (known after apply)
+      + route_table_id = (known after apply)
+      + subnet_id      = (known after apply)
+    }
+
+  # aws_route_table_association.main-public-2-a will be created
+  + resource "aws_route_table_association" "main-public-2-a" {
+      + id             = (known after apply)
+      + route_table_id = (known after apply)
+      + subnet_id      = (known after apply)
+    }
+
+  # aws_route_table_association.main-public-3-a will be created
+  + resource "aws_route_table_association" "main-public-3-a" {
+      + id             = (known after apply)
+      + route_table_id = (known after apply)
+      + subnet_id      = (known after apply)
+    }
+
+  # aws_s3_bucket.terraform-state will be created
+  + resource "aws_s3_bucket" "terraform-state" {
+      + acceleration_status         = (known after apply)
+      + acl                         = "private"
+      + arn                         = (known after apply)
+      + bucket                      = "terraform-state-vchaudh3"
+      + bucket_domain_name          = (known after apply)
+      + bucket_regional_domain_name = (known after apply)
+      + force_destroy               = false
+      + hosted_zone_id              = (known after apply)
+      + id                          = (known after apply)
+      + region                      = (known after apply)
+      + request_payer               = (known after apply)
+      + tags                        = {
+          + "Name" = "Terraform state"
+        }
+      + website_domain              = (known after apply)
+      + website_endpoint            = (known after apply)
+
+      + versioning {
+          + enabled    = (known after apply)
+          + mfa_delete = (known after apply)
+        }
+    }
+
+  # aws_security_group.app-securitygroup will be created
+  + resource "aws_security_group" "app-securitygroup" {
+      + arn                    = (known after apply)
+      + description            = "security group that allows ssh and all egress traffic"
+      + egress                 = [
+          + {
+              + cidr_blocks      = [
+                  + "0.0.0.0/0",
+                ]
+              + description      = ""
+              + from_port        = 0
+              + ipv6_cidr_blocks = []
+              + prefix_list_ids  = []
+              + protocol         = "-1"
+              + security_groups  = []
+              + self             = false
+              + to_port          = 0
+            },
+        ]
+      + id                     = (known after apply)
+      + ingress                = [
+          + {
+              + cidr_blocks      = [
+                  + "0.0.0.0/0",
+                ]
+              + description      = ""
+              + from_port        = 22
+              + ipv6_cidr_blocks = []
+              + prefix_list_ids  = []
+              + protocol         = "tcp"
+              + security_groups  = []
+              + self             = false
+              + to_port          = 22
+            },
+          + {
+              + cidr_blocks      = [
+                  + "0.0.0.0/0",
+                ]
+              + description      = ""
+              + from_port        = 80
+              + ipv6_cidr_blocks = []
+              + prefix_list_ids  = []
+              + protocol         = "tcp"
+              + security_groups  = []
+              + self             = false
+              + to_port          = 80
+            },
+        ]
+      + name                   = "app-securitygroup"
+      + owner_id               = (known after apply)
+      + revoke_rules_on_delete = false
+      + tags                   = {
+          + "Name" = "app-securitygroup"
+        }
+      + vpc_id                 = (known after apply)
+    }
+
+  # aws_security_group.jenkins-securitygroup will be created
+  + resource "aws_security_group" "jenkins-securitygroup" {
+      + arn                    = (known after apply)
+      + description            = "security group that allows ssh and all egress traffic"
+      + egress                 = [
+          + {
+              + cidr_blocks      = [
+                  + "0.0.0.0/0",
+                ]
+              + description      = ""
+              + from_port        = 0
+              + ipv6_cidr_blocks = []
+              + prefix_list_ids  = []
+              + protocol         = "-1"
+              + security_groups  = []
+              + self             = false
+              + to_port          = 0
+            },
+        ]
+      + id                     = (known after apply)
+      + ingress                = [
+          + {
+              + cidr_blocks      = [
+                  + "0.0.0.0/0",
+                ]
+              + description      = ""
+              + from_port        = 22
+              + ipv6_cidr_blocks = []
+              + prefix_list_ids  = []
+              + protocol         = "tcp"
+              + security_groups  = []
+              + self             = false
+              + to_port          = 22
+            },
+          + {
+              + cidr_blocks      = [
+                  + "0.0.0.0/0",
+                ]
+              + description      = ""
+              + from_port        = 8080
+              + ipv6_cidr_blocks = []
+              + prefix_list_ids  = []
+              + protocol         = "tcp"
+              + security_groups  = []
+              + self             = false
+              + to_port          = 8080
+            },
+          + {
+              + cidr_blocks      = [
+                  + "0.0.0.0/0",
+                ]
+              + description      = ""
+              + from_port        = 8081
+              + ipv6_cidr_blocks = []
+              + prefix_list_ids  = []
+              + protocol         = "tcp"
+              + security_groups  = []
+              + self             = false
+              + to_port          = 8081
+            },
+        ]
+      + name                   = "jenkins-securitygroup"
+      + owner_id               = (known after apply)
+      + revoke_rules_on_delete = false
+      + tags                   = {
+          + "Name" = "jenkins-securitygroup"
+        }
+      + vpc_id                 = (known after apply)
+    }
+
+  # aws_sns_topic.alarm will be created
+  + resource "aws_sns_topic" "alarm" {
+      + arn             = (known after apply)
+      + delivery_policy = jsonencode(
+            {
+              + http = {
+                  + defaultHealthyRetryPolicy    = {
+                      + backoffFunction    = "linear"
+                      + maxDelayTarget     = 20
+                      + minDelayTarget     = 20
+                      + numMaxDelayRetries = 0
+                      + numMinDelayRetries = 0
+                      + numNoDelayRetries  = 0
+                      + numRetries         = 3
+                    }
+                  + defaultThrottlePolicy        = {
+                      + maxReceivesPerSecond = 1
+                    }
+                  + disableSubscriptionOverrides = false
+                }
+            }
+        )
+      + id              = (known after apply)
+      + name            = "alarms-topic"
+      + policy          = (known after apply)
+    }
+
+  # aws_subnet.main-private-1 will be created
+  + resource "aws_subnet" "main-private-1" {
+      + arn                             = (known after apply)
+      + assign_ipv6_address_on_creation = false
+      + availability_zone               = "eu-west-1a"
+      + availability_zone_id            = (known after apply)
+      + cidr_block                      = "10.0.4.0/24"
+      + id                              = (known after apply)
+      + ipv6_cidr_block                 = (known after apply)
+      + ipv6_cidr_block_association_id  = (known after apply)
+      + map_public_ip_on_launch         = false
+      + owner_id                        = (known after apply)
+      + tags                            = {
+          + "Name" = "main-private-1"
+        }
+      + vpc_id                          = (known after apply)
+    }
+
+  # aws_subnet.main-private-2 will be created
+  + resource "aws_subnet" "main-private-2" {
+      + arn                             = (known after apply)
+      + assign_ipv6_address_on_creation = false
+      + availability_zone               = "eu-west-1b"
+      + availability_zone_id            = (known after apply)
+      + cidr_block                      = "10.0.5.0/24"
+      + id                              = (known after apply)
+      + ipv6_cidr_block                 = (known after apply)
+      + ipv6_cidr_block_association_id  = (known after apply)
+      + map_public_ip_on_launch         = false
+      + owner_id                        = (known after apply)
+      + tags                            = {
+          + "Name" = "main-private-2"
+        }
+      + vpc_id                          = (known after apply)
+    }
+
+  # aws_subnet.main-private-3 will be created
+  + resource "aws_subnet" "main-private-3" {
+      + arn                             = (known after apply)
+      + assign_ipv6_address_on_creation = false
+      + availability_zone               = "eu-west-1c"
+      + availability_zone_id            = (known after apply)
+      + cidr_block                      = "10.0.6.0/24"
+      + id                              = (known after apply)
+      + ipv6_cidr_block                 = (known after apply)
+      + ipv6_cidr_block_association_id  = (known after apply)
+      + map_public_ip_on_launch         = false
+      + owner_id                        = (known after apply)
+      + tags                            = {
+          + "Name" = "main-private-3"
+        }
+      + vpc_id                          = (known after apply)
+    }
+
+  # aws_subnet.main-public-1 will be created
+  + resource "aws_subnet" "main-public-1" {
+      + arn                             = (known after apply)
+      + assign_ipv6_address_on_creation = false
+      + availability_zone               = "eu-west-1a"
+      + availability_zone_id            = (known after apply)
+      + cidr_block                      = "10.0.1.0/24"
+      + id                              = (known after apply)
+      + ipv6_cidr_block                 = (known after apply)
+      + ipv6_cidr_block_association_id  = (known after apply)
+      + map_public_ip_on_launch         = true
+      + owner_id                        = (known after apply)
+      + tags                            = {
+          + "Name" = "main-public-1"
+        }
+      + vpc_id                          = (known after apply)
+    }
+
+  # aws_subnet.main-public-2 will be created
+  + resource "aws_subnet" "main-public-2" {
+      + arn                             = (known after apply)
+      + assign_ipv6_address_on_creation = false
+      + availability_zone               = "eu-west-1b"
+      + availability_zone_id            = (known after apply)
+      + cidr_block                      = "10.0.2.0/24"
+      + id                              = (known after apply)
+      + ipv6_cidr_block                 = (known after apply)
+      + ipv6_cidr_block_association_id  = (known after apply)
+      + map_public_ip_on_launch         = true
+      + owner_id                        = (known after apply)
+      + tags                            = {
+          + "Name" = "main-public-2"
+        }
+      + vpc_id                          = (known after apply)
+    }
+
+  # aws_subnet.main-public-3 will be created
+  + resource "aws_subnet" "main-public-3" {
+      + arn                             = (known after apply)
+      + assign_ipv6_address_on_creation = false
+      + availability_zone               = "eu-west-1c"
+      + availability_zone_id            = (known after apply)
+      + cidr_block                      = "10.0.3.0/24"
+      + id                              = (known after apply)
+      + ipv6_cidr_block                 = (known after apply)
+      + ipv6_cidr_block_association_id  = (known after apply)
+      + map_public_ip_on_launch         = true
+      + owner_id                        = (known after apply)
+      + tags                            = {
+          + "Name" = "main-public-3"
+        }
+      + vpc_id                          = (known after apply)
+    }
+
+  # aws_volume_attachment.jenkins-data-attachment will be created
+  + resource "aws_volume_attachment" "jenkins-data-attachment" {
+      + device_name  = "/dev/xvdh"
+      + id           = (known after apply)
+      + instance_id  = (known after apply)
+      + skip_destroy = true
+      + volume_id    = (known after apply)
+    }
+
+  # aws_vpc.main will be created
+  + resource "aws_vpc" "main" {
+      + arn                              = (known after apply)
+      + assign_generated_ipv6_cidr_block = false
+      + cidr_block                       = "10.0.0.0/16"
+      + default_network_acl_id           = (known after apply)
+      + default_route_table_id           = (known after apply)
+      + default_security_group_id        = (known after apply)
+      + dhcp_options_id                  = (known after apply)
+      + enable_classiclink               = false
+      + enable_classiclink_dns_support   = (known after apply)
+      + enable_dns_hostnames             = true
+      + enable_dns_support               = true
+      + id                               = (known after apply)
+      + instance_tenancy                 = "default"
+      + ipv6_association_id              = (known after apply)
+      + ipv6_cidr_block                  = (known after apply)
+      + main_route_table_id              = (known after apply)
+      + owner_id                         = (known after apply)
+      + tags                             = {
+          + "Name" = "main"
+        }
+    }
+
+Plan: 22 to add, 0 to change, 0 to destroy.
+
+Warning: Interpolation-only expressions are deprecated
+
+  on instance.tf line 18, in resource "aws_instance" "jenkins-instance":
+  18:   private_key = "${file(var.PATH_TO_PRIVATE_KEY)}"
+
+Terraform 0.11 and earlier required all non-constant expressions to be
+provided via interpolation syntax, but this pattern is now deprecated. To
+silence this warning, remove the "${ sequence from the start and the }"
+sequence from the end of this expression, leaving just the inner expression.
+
+Template interpolation syntax is still used to construct strings from
+expressions when the template includes multiple interpolation sequences or a
+mixture of literal strings and interpolations. This deprecation applies only
+to templates that consist entirely of a single interpolation sequence.
+
+(and 5 more similar warnings elsewhere)
+
+
+------------------------------------------------------------------------
+
+Note: You didn't specify an "-out" parameter to save this plan, so Terraform
+can't guarantee that exactly these actions will be performed if
+"terraform apply" is subsequently run.
+
+root@VM-101576942:~/git/tf_jenkins_ansible# /usr/bin/terraform.v0.12.23 apply
+data.template_file.jenkins-init: Refreshing state...
+data.template_cloudinit_config.cloudinit-jenkins: Refreshing state...
+
+An execution plan has been generated and is shown below.
+Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # aws_cloudwatch_metric_alarm.cpu-utilization will be created
+  + resource "aws_cloudwatch_metric_alarm" "cpu-utilization" {
+      + actions_enabled                       = true
+      + alarm_actions                         = (known after apply)
+      + alarm_description                     = "This metric monitors ec2 cpu utilization"
+      + alarm_name                            = "high-cpu-utilization-alarm"
+      + arn                                   = (known after apply)
+      + comparison_operator                   = "GreaterThanOrEqualToThreshold"
+      + dimensions                            = (known after apply)
+      + evaluate_low_sample_count_percentiles = (known after apply)
+      + evaluation_periods                    = 2
+      + id                                    = (known after apply)
+      + metric_name                           = "CPUUtilization"
+      + namespace                             = "AWS/EC2"
+      + period                                = 120
+      + statistic                             = "Average"
+      + threshold                             = 1
+      + treat_missing_data                    = "missing"
+    }
+
+  # aws_cloudwatch_metric_alarm.instance-health-check will be created
+  + resource "aws_cloudwatch_metric_alarm" "instance-health-check" {
+      + actions_enabled                       = true
+      + alarm_actions                         = (known after apply)
+      + alarm_description                     = "This metric monitors ec2 health status"
+      + alarm_name                            = "instance-health-check"
+      + arn                                   = (known after apply)
+      + comparison_operator                   = "GreaterThanOrEqualToThreshold"
+      + dimensions                            = (known after apply)
+      + evaluate_low_sample_count_percentiles = (known after apply)
+      + evaluation_periods                    = 1
+      + id                                    = (known after apply)
+      + metric_name                           = "StatusCheckFailed"
+      + namespace                             = "AWS/EC2"
+      + period                                = 120
+      + statistic                             = "Average"
+      + threshold                             = 1
+      + treat_missing_data                    = "missing"
+    }
+
+  # aws_ebs_volume.jenkins-data will be created
+  + resource "aws_ebs_volume" "jenkins-data" {
+      + arn               = (known after apply)
+      + availability_zone = "eu-west-1a"
+      + encrypted         = (known after apply)
+      + id                = (known after apply)
+      + iops              = (known after apply)
+      + kms_key_id        = (known after apply)
+      + size              = 20
+      + snapshot_id       = (known after apply)
+      + tags              = {
+          + "Name" = "jenkins-data"
+        }
+      + type              = "gp2"
+    }
+
+  # aws_instance.jenkins-instance will be created
+  + resource "aws_instance" "jenkins-instance" {
+      + ami                          = "ami-844e0bf7"
+      + arn                          = (known after apply)
+      + associate_public_ip_address  = (known after apply)
+      + availability_zone            = (known after apply)
+      + cpu_core_count               = (known after apply)
+      + cpu_threads_per_core         = (known after apply)
+      + get_password_data            = false
+      + host_id                      = (known after apply)
+      + id                           = (known after apply)
+      + instance_state               = (known after apply)
+      + instance_type                = "t2.medium"
+      + ipv6_address_count           = (known after apply)
+      + ipv6_addresses               = (known after apply)
+      + key_name                     = "mykeypair"
+      + network_interface_id         = (known after apply)
+      + password_data                = (known after apply)
+      + placement_group              = (known after apply)
+      + primary_network_interface_id = (known after apply)
+      + private_dns                  = (known after apply)
+      + private_ip                   = (known after apply)
+      + public_dns                   = (known after apply)
+      + public_ip                    = (known after apply)
+      + security_groups              = (known after apply)
+      + source_dest_check            = true
+      + subnet_id                    = (known after apply)
+      + tenancy                      = (known after apply)
+      + user_data                    = "57ba6e2307cb99c861893c18c053c09148ff06b6"
+      + volume_tags                  = (known after apply)
+      + vpc_security_group_ids       = (known after apply)
+
+      + ebs_block_device {
+          + delete_on_termination = (known after apply)
+          + device_name           = (known after apply)
+          + encrypted             = (known after apply)
+          + iops                  = (known after apply)
+          + kms_key_id            = (known after apply)
+          + snapshot_id           = (known after apply)
+          + volume_id             = (known after apply)
+          + volume_size           = (known after apply)
+          + volume_type           = (known after apply)
+        }
+
+      + ephemeral_block_device {
+          + device_name  = (known after apply)
+          + no_device    = (known after apply)
+          + virtual_name = (known after apply)
+        }
+
+      + network_interface {
+          + delete_on_termination = (known after apply)
+          + device_index          = (known after apply)
+          + network_interface_id  = (known after apply)
+        }
+
+      + root_block_device {
+          + delete_on_termination = (known after apply)
+          + encrypted             = (known after apply)
+          + iops                  = (known after apply)
+          + kms_key_id            = (known after apply)
+          + volume_id             = (known after apply)
+          + volume_size           = (known after apply)
+          + volume_type           = (known after apply)
+        }
+    }
+
+  # aws_internet_gateway.main-gw will be created
+  + resource "aws_internet_gateway" "main-gw" {
+      + id       = (known after apply)
+      + owner_id = (known after apply)
+      + tags     = {
+          + "Name" = "main"
+        }
+      + vpc_id   = (known after apply)
+    }
+
+  # aws_key_pair.mykeypair will be created
+  + resource "aws_key_pair" "mykeypair" {
+      + fingerprint = (known after apply)
+      + id          = (known after apply)
+      + key_name    = "mykeypair"
+      + key_pair_id = (known after apply)
+      + public_key  = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDCBbkxQZdFXOwZ6kfgHDaptfJztYTWLwcQKaf4CabBFBGjeoNOm7NNbEjlEWnyWGDDwNRDWV1cnUG8rlfPP4s4iDmdM4yiijz45P80za659Rl0yNuttpTR3YPd0BwlnVnrBC/W1A/BpPiknQNP1zI7rt1WZ5VcTI9xP9hY1uUharjht2aZhkCbZGMF2dO4rtnJDBRlNlzltglgfJfZVPwDnsHSMZDSDH5hv3vQuzW4Xa7eHNdothmX7qK/2BoFccSiCWw38jVTjHkpVnuMow3hUQ4IZnDgFbkZI5Ux6/9u94EXoPvLwLFMkGM9iv1hvJO80KEKpnFsIZaMtfp3xjpV root@VM-101576942"
+    }
+
+  # aws_route_table.main-public will be created
+  + resource "aws_route_table" "main-public" {
+      + id               = (known after apply)
+      + owner_id         = (known after apply)
+      + propagating_vgws = (known after apply)
+      + route            = [
+          + {
+              + cidr_block                = "0.0.0.0/0"
+              + egress_only_gateway_id    = ""
+              + gateway_id                = (known after apply)
+              + instance_id               = ""
+              + ipv6_cidr_block           = ""
+              + nat_gateway_id            = ""
+              + network_interface_id      = ""
+              + transit_gateway_id        = ""
+              + vpc_peering_connection_id = ""
+            },
+        ]
+      + tags             = {
+          + "Name" = "main-public-1"
+        }
+      + vpc_id           = (known after apply)
+    }
+
+  # aws_route_table_association.main-public-1-a will be created
+  + resource "aws_route_table_association" "main-public-1-a" {
+      + id             = (known after apply)
+      + route_table_id = (known after apply)
+      + subnet_id      = (known after apply)
+    }
+
+  # aws_route_table_association.main-public-2-a will be created
+  + resource "aws_route_table_association" "main-public-2-a" {
+      + id             = (known after apply)
+      + route_table_id = (known after apply)
+      + subnet_id      = (known after apply)
+    }
+
+  # aws_route_table_association.main-public-3-a will be created
+  + resource "aws_route_table_association" "main-public-3-a" {
+      + id             = (known after apply)
+      + route_table_id = (known after apply)
+      + subnet_id      = (known after apply)
+    }
+
+  # aws_s3_bucket.terraform-state will be created
+  + resource "aws_s3_bucket" "terraform-state" {
+      + acceleration_status         = (known after apply)
+      + acl                         = "private"
+      + arn                         = (known after apply)
+      + bucket                      = "terraform-state-vchaudh3"
+      + bucket_domain_name          = (known after apply)
+      + bucket_regional_domain_name = (known after apply)
+      + force_destroy               = false
+      + hosted_zone_id              = (known after apply)
+      + id                          = (known after apply)
+      + region                      = (known after apply)
+      + request_payer               = (known after apply)
+      + tags                        = {
+          + "Name" = "Terraform state"
+        }
+      + website_domain              = (known after apply)
+      + website_endpoint            = (known after apply)
+
+      + versioning {
+          + enabled    = (known after apply)
+          + mfa_delete = (known after apply)
+        }
+    }
+
+  # aws_security_group.app-securitygroup will be created
+  + resource "aws_security_group" "app-securitygroup" {
+      + arn                    = (known after apply)
+      + description            = "security group that allows ssh and all egress traffic"
+      + egress                 = [
+          + {
+              + cidr_blocks      = [
+                  + "0.0.0.0/0",
+                ]
+              + description      = ""
+              + from_port        = 0
+              + ipv6_cidr_blocks = []
+              + prefix_list_ids  = []
+              + protocol         = "-1"
+              + security_groups  = []
+              + self             = false
+              + to_port          = 0
+            },
+        ]
+      + id                     = (known after apply)
+      + ingress                = [
+          + {
+              + cidr_blocks      = [
+                  + "0.0.0.0/0",
+                ]
+              + description      = ""
+              + from_port        = 22
+              + ipv6_cidr_blocks = []
+              + prefix_list_ids  = []
+              + protocol         = "tcp"
+              + security_groups  = []
+              + self             = false
+              + to_port          = 22
+            },
+          + {
+              + cidr_blocks      = [
+                  + "0.0.0.0/0",
+                ]
+              + description      = ""
+              + from_port        = 80
+              + ipv6_cidr_blocks = []
+              + prefix_list_ids  = []
+              + protocol         = "tcp"
+              + security_groups  = []
+              + self             = false
+              + to_port          = 80
+            },
+        ]
+      + name                   = "app-securitygroup"
+      + owner_id               = (known after apply)
+      + revoke_rules_on_delete = false
+      + tags                   = {
+          + "Name" = "app-securitygroup"
+        }
+      + vpc_id                 = (known after apply)
+    }
+
+  # aws_security_group.jenkins-securitygroup will be created
+  + resource "aws_security_group" "jenkins-securitygroup" {
+      + arn                    = (known after apply)
+      + description            = "security group that allows ssh and all egress traffic"
+      + egress                 = [
+          + {
+              + cidr_blocks      = [
+                  + "0.0.0.0/0",
+                ]
+              + description      = ""
+              + from_port        = 0
+              + ipv6_cidr_blocks = []
+              + prefix_list_ids  = []
+              + protocol         = "-1"
+              + security_groups  = []
+              + self             = false
+              + to_port          = 0
+            },
+        ]
+      + id                     = (known after apply)
+      + ingress                = [
+          + {
+              + cidr_blocks      = [
+                  + "0.0.0.0/0",
+                ]
+              + description      = ""
+              + from_port        = 22
+              + ipv6_cidr_blocks = []
+              + prefix_list_ids  = []
+              + protocol         = "tcp"
+              + security_groups  = []
+              + self             = false
+              + to_port          = 22
+            },
+          + {
+              + cidr_blocks      = [
+                  + "0.0.0.0/0",
+                ]
+              + description      = ""
+              + from_port        = 8080
+              + ipv6_cidr_blocks = []
+              + prefix_list_ids  = []
+              + protocol         = "tcp"
+              + security_groups  = []
+              + self             = false
+              + to_port          = 8080
+            },
+          + {
+              + cidr_blocks      = [
+                  + "0.0.0.0/0",
+                ]
+              + description      = ""
+              + from_port        = 8081
+              + ipv6_cidr_blocks = []
+              + prefix_list_ids  = []
+              + protocol         = "tcp"
+              + security_groups  = []
+              + self             = false
+              + to_port          = 8081
+            },
+        ]
+      + name                   = "jenkins-securitygroup"
+      + owner_id               = (known after apply)
+      + revoke_rules_on_delete = false
+      + tags                   = {
+          + "Name" = "jenkins-securitygroup"
+        }
+      + vpc_id                 = (known after apply)
+    }
+
+  # aws_sns_topic.alarm will be created
+  + resource "aws_sns_topic" "alarm" {
+      + arn             = (known after apply)
+      + delivery_policy = jsonencode(
+            {
+              + http = {
+                  + defaultHealthyRetryPolicy    = {
+                      + backoffFunction    = "linear"
+                      + maxDelayTarget     = 20
+                      + minDelayTarget     = 20
+                      + numMaxDelayRetries = 0
+                      + numMinDelayRetries = 0
+                      + numNoDelayRetries  = 0
+                      + numRetries         = 3
+                    }
+                  + defaultThrottlePolicy        = {
+                      + maxReceivesPerSecond = 1
+                    }
+                  + disableSubscriptionOverrides = false
+                }
+            }
+        )
+      + id              = (known after apply)
+      + name            = "alarms-topic"
+      + policy          = (known after apply)
+    }
+
+  # aws_subnet.main-private-1 will be created
+  + resource "aws_subnet" "main-private-1" {
+      + arn                             = (known after apply)
+      + assign_ipv6_address_on_creation = false
+      + availability_zone               = "eu-west-1a"
+      + availability_zone_id            = (known after apply)
+      + cidr_block                      = "10.0.4.0/24"
+      + id                              = (known after apply)
+      + ipv6_cidr_block                 = (known after apply)
+      + ipv6_cidr_block_association_id  = (known after apply)
+      + map_public_ip_on_launch         = false
+      + owner_id                        = (known after apply)
+      + tags                            = {
+          + "Name" = "main-private-1"
+        }
+      + vpc_id                          = (known after apply)
+    }
+
+  # aws_subnet.main-private-2 will be created
+  + resource "aws_subnet" "main-private-2" {
+      + arn                             = (known after apply)
+      + assign_ipv6_address_on_creation = false
+      + availability_zone               = "eu-west-1b"
+      + availability_zone_id            = (known after apply)
+      + cidr_block                      = "10.0.5.0/24"
+      + id                              = (known after apply)
+      + ipv6_cidr_block                 = (known after apply)
+      + ipv6_cidr_block_association_id  = (known after apply)
+      + map_public_ip_on_launch         = false
+      + owner_id                        = (known after apply)
+      + tags                            = {
+          + "Name" = "main-private-2"
+        }
+      + vpc_id                          = (known after apply)
+    }
+
+  # aws_subnet.main-private-3 will be created
+  + resource "aws_subnet" "main-private-3" {
+      + arn                             = (known after apply)
+      + assign_ipv6_address_on_creation = false
+      + availability_zone               = "eu-west-1c"
+      + availability_zone_id            = (known after apply)
+      + cidr_block                      = "10.0.6.0/24"
+      + id                              = (known after apply)
+      + ipv6_cidr_block                 = (known after apply)
+      + ipv6_cidr_block_association_id  = (known after apply)
+      + map_public_ip_on_launch         = false
+      + owner_id                        = (known after apply)
+      + tags                            = {
+          + "Name" = "main-private-3"
+        }
+      + vpc_id                          = (known after apply)
+    }
+
+  # aws_subnet.main-public-1 will be created
+  + resource "aws_subnet" "main-public-1" {
+      + arn                             = (known after apply)
+      + assign_ipv6_address_on_creation = false
+      + availability_zone               = "eu-west-1a"
+      + availability_zone_id            = (known after apply)
+      + cidr_block                      = "10.0.1.0/24"
+      + id                              = (known after apply)
+      + ipv6_cidr_block                 = (known after apply)
+      + ipv6_cidr_block_association_id  = (known after apply)
+      + map_public_ip_on_launch         = true
+      + owner_id                        = (known after apply)
+      + tags                            = {
+          + "Name" = "main-public-1"
+        }
+      + vpc_id                          = (known after apply)
+    }
+
+  # aws_subnet.main-public-2 will be created
+  + resource "aws_subnet" "main-public-2" {
+      + arn                             = (known after apply)
+      + assign_ipv6_address_on_creation = false
+      + availability_zone               = "eu-west-1b"
+      + availability_zone_id            = (known after apply)
+      + cidr_block                      = "10.0.2.0/24"
+      + id                              = (known after apply)
+      + ipv6_cidr_block                 = (known after apply)
+      + ipv6_cidr_block_association_id  = (known after apply)
+      + map_public_ip_on_launch         = true
+      + owner_id                        = (known after apply)
+      + tags                            = {
+          + "Name" = "main-public-2"
+        }
+      + vpc_id                          = (known after apply)
+    }
+
+  # aws_subnet.main-public-3 will be created
+  + resource "aws_subnet" "main-public-3" {
+      + arn                             = (known after apply)
+      + assign_ipv6_address_on_creation = false
+      + availability_zone               = "eu-west-1c"
+      + availability_zone_id            = (known after apply)
+      + cidr_block                      = "10.0.3.0/24"
+      + id                              = (known after apply)
+      + ipv6_cidr_block                 = (known after apply)
+      + ipv6_cidr_block_association_id  = (known after apply)
+      + map_public_ip_on_launch         = true
+      + owner_id                        = (known after apply)
+      + tags                            = {
+          + "Name" = "main-public-3"
+        }
+      + vpc_id                          = (known after apply)
+    }
+
+  # aws_volume_attachment.jenkins-data-attachment will be created
+  + resource "aws_volume_attachment" "jenkins-data-attachment" {
+      + device_name  = "/dev/xvdh"
+      + id           = (known after apply)
+      + instance_id  = (known after apply)
+      + skip_destroy = true
+      + volume_id    = (known after apply)
+    }
+
+  # aws_vpc.main will be created
+  + resource "aws_vpc" "main" {
+      + arn                              = (known after apply)
+      + assign_generated_ipv6_cidr_block = false
+      + cidr_block                       = "10.0.0.0/16"
+      + default_network_acl_id           = (known after apply)
+      + default_route_table_id           = (known after apply)
+      + default_security_group_id        = (known after apply)
+      + dhcp_options_id                  = (known after apply)
+      + enable_classiclink               = false
+      + enable_classiclink_dns_support   = (known after apply)
+      + enable_dns_hostnames             = true
+      + enable_dns_support               = true
+      + id                               = (known after apply)
+      + instance_tenancy                 = "default"
+      + ipv6_association_id              = (known after apply)
+      + ipv6_cidr_block                  = (known after apply)
+      + main_route_table_id              = (known after apply)
+      + owner_id                         = (known after apply)
+      + tags                             = {
+          + "Name" = "main"
+        }
+    }
+
+Plan: 22 to add, 0 to change, 0 to destroy.
+
+
+Warning: Interpolation-only expressions are deprecated
+
+  on instance.tf line 18, in resource "aws_instance" "jenkins-instance":
+  18:   private_key = "${file(var.PATH_TO_PRIVATE_KEY)}"
+
+Terraform 0.11 and earlier required all non-constant expressions to be
+provided via interpolation syntax, but this pattern is now deprecated. To
+silence this warning, remove the "${ sequence from the start and the }"
+sequence from the end of this expression, leaving just the inner expression.
+
+Template interpolation syntax is still used to construct strings from
+expressions when the template includes multiple interpolation sequences or a
+mixture of literal strings and interpolations. This deprecation applies only
+to templates that consist entirely of a single interpolation sequence.
+
+(and 5 more similar warnings elsewhere)
+
+Do you want to perform these actions?
+  Terraform will perform the actions described above.
+  Only 'yes' will be accepted to approve.
+
+  Enter a value: yes
+
+aws_key_pair.mykeypair: Creating...
+aws_s3_bucket.terraform-state: Creating...
+aws_vpc.main: Creating...
+aws_ebs_volume.jenkins-data: Creating...
+aws_sns_topic.alarm: Creating...
+aws_key_pair.mykeypair: Creation complete after 1s [id=mykeypair]
+aws_sns_topic.alarm: Provisioning with 'local-exec'...
+aws_sns_topic.alarm (local-exec): Executing: ["/bin/sh" "-c" "aws sns subscribe --topic-arn arn:aws:sns:eu-west-1:530344740641:alarms-topic --protocol email --notification-endpoint Vijay.Chaudhary22@gmail.com"]
+aws_sns_topic.alarm (local-exec): {
+aws_sns_topic.alarm (local-exec):     "SubscriptionArn": "pending confirmation"
+aws_sns_topic.alarm (local-exec): }
+aws_sns_topic.alarm: Creation complete after 5s [id=arn:aws:sns:eu-west-1:530344740641:alarms-topic]
+aws_vpc.main: Creation complete after 8s [id=vpc-00da7248c8220527c]
+aws_security_group.jenkins-securitygroup: Creating...
+aws_subnet.main-public-3: Creating...
+aws_security_group.app-securitygroup: Creating...
+aws_subnet.main-private-3: Creating...
+aws_subnet.main-public-2: Creating...
+aws_subnet.main-private-2: Creating...
+aws_internet_gateway.main-gw: Creating...
+aws_subnet.main-private-1: Creating...
+aws_s3_bucket.terraform-state: Still creating... [10s elapsed]
+aws_ebs_volume.jenkins-data: Still creating... [10s elapsed]
+aws_s3_bucket.terraform-state: Creation complete after 11s [id=terraform-state-vchaudh3]
+aws_subnet.main-public-1: Creating...
+aws_subnet.main-private-1: Creation complete after 3s [id=subnet-0d77b61747fe4c2af]
+aws_subnet.main-private-2: Creation complete after 3s [id=subnet-07e10f585c0d0279c]
+aws_subnet.main-private-3: Creation complete after 3s [id=subnet-0f20320cd2d08b991]
+aws_ebs_volume.jenkins-data: Creation complete after 12s [id=vol-09ffdbebd04d62556]
+aws_subnet.main-public-2: Creation complete after 4s [id=subnet-0d470e566caa9a546]
+aws_subnet.main-public-3: Creation complete after 4s [id=subnet-0b2e8d1991577e6fb]
+aws_internet_gateway.main-gw: Creation complete after 4s [id=igw-0840b076c30b575bc]
+aws_route_table.main-public: Creating...
+aws_subnet.main-public-1: Creation complete after 4s [id=subnet-0a9014fcf3a607dd3]
+aws_security_group.app-securitygroup: Creation complete after 7s [id=sg-0febe934b68b0d098]
+aws_security_group.jenkins-securitygroup: Creation complete after 7s [id=sg-0f0bdf274f8af13ba]
+aws_instance.jenkins-instance: Creating...
+aws_route_table.main-public: Creation complete after 4s [id=rtb-0c347e519e9b63ac7]
+aws_route_table_association.main-public-3-a: Creating...
+aws_route_table_association.main-public-2-a: Creating...
+aws_route_table_association.main-public-1-a: Creating...
+aws_route_table_association.main-public-1-a: Creation complete after 0s [id=rtbassoc-0921b0034b5e29df1]
+aws_route_table_association.main-public-3-a: Creation complete after 0s [id=rtbassoc-0c9c8b358e8e98197]
+aws_route_table_association.main-public-2-a: Creation complete after 0s [id=rtbassoc-07eb8e136a1d32f71]
+aws_instance.jenkins-instance: Still creating... [10s elapsed]
+aws_instance.jenkins-instance: Still creating... [20s elapsed]
+aws_instance.jenkins-instance: Still creating... [30s elapsed]
+aws_instance.jenkins-instance: Provisioning with 'remote-exec'...
+aws_instance.jenkins-instance (remote-exec): Connecting to remote host via SSH...
+aws_instance.jenkins-instance (remote-exec):   Host: 52.211.105.7
+aws_instance.jenkins-instance (remote-exec):   User: ubuntu
+aws_instance.jenkins-instance (remote-exec):   Password: false
+aws_instance.jenkins-instance (remote-exec):   Private key: true
+aws_instance.jenkins-instance (remote-exec):   Certificate: false
+aws_instance.jenkins-instance (remote-exec):   SSH Agent: false
+aws_instance.jenkins-instance (remote-exec):   Checking Host Key: false
+aws_instance.jenkins-instance (remote-exec): Connected!
+aws_instance.jenkins-instance: Still creating... [40s elapsed]
+aws_instance.jenkins-instance (remote-exec): 0% [Working]
+aws_instance.jenkins-instance (remote-exec): Hit:1 http://eu-west-1.ec2.archive.ubuntu.com/ubuntu xenial InRelease
+aws_instance.jenkins-instance (remote-exec): 0% [Connecting to security.ubuntu.com]
+aws_instance.jenkins-instance (remote-exec): Get:2 http://eu-west-1.ec2.archive.ubuntu.com/ubuntu xenial-updates InRelease [109 kB]
+aws_instance.jenkins-instance (remote-exec): 0% [Waiting for headers] [Connecting to
+aws_instance.jenkins-instance (remote-exec): 0% [1 InRelease gpgv 247 kB] [Waiting f
+aws_instance.jenkins-instance (remote-exec): Get:3 http://eu-west-1.ec2.archive.ubuntu.com/ubuntu xenial-backports InRelease [107 kB]
+aws_instance.jenkins-instance (remote-exec): 0% [1 InRelease gpgv 247 kB] [Connectin
+aws_instance.jenkins-instance (remote-exec): 0% [Connecting to security.ubuntu.com (
+aws_instance.jenkins-instance (remote-exec): 0% [2 InRelease gpgv 109 kB] [Waiting f
+aws_instance.jenkins-instance (remote-exec): Get:4 http://eu-west-1.ec2.archive.ubuntu.com/ubuntu xenial/main Sources [868 kB]
+aws_instance.jenkins-instance (remote-exec): 0% [2 InRelease gpgv 109 kB] [4 Sources
+aws_instance.jenkins-instance (remote-exec): 0% [2 InRelease gpgv 109 kB] [Connectin
+aws_instance.jenkins-instance (remote-exec): 0% [4 Sources store 0 B] [2 InRelease g
+aws_instance.jenkins-instance (remote-exec): Get:5 http://eu-west-1.ec2.archive.ubuntu.com/ubuntu xenial/restricted Sources [4,808 B]
+aws_instance.jenkins-instance (remote-exec): 0% [4 Sources store 0 B] [2 InRelease g
+aws_instance.jenkins-instance (remote-exec): Get:6 http://eu-west-1.ec2.archive.ubuntu.com/ubuntu xenial/universe Sources [7,728 kB]
+aws_instance.jenkins-instance (remote-exec): 0% [4 Sources store 0 B] [2 InRelease g
+aws_instance.jenkins-instance (remote-exec): 0% [4 Sources store 0 B] [6 Sources 5,3
+aws_instance.jenkins-instance (remote-exec): Get:7 http://security.ubuntu.com/ubuntu xenial-security InRelease [109 kB]
+aws_instance.jenkins-instance (remote-exec): 0% [4 Sources store 0 B] [3 InRelease g
+aws_instance.jenkins-instance (remote-exec): 0% [4 Sources store 0 B] [3 InRelease g
+aws_instance.jenkins-instance (remote-exec): Get:8 http://eu-west-1.ec2.archive.ubuntu.com/ubuntu xenial/multiverse Sources [179 kB]
+aws_instance.jenkins-instance (remote-exec): 0% [4 Sources store 0 B] [3 InRelease g
+aws_instance.jenkins-instance (remote-exec): Get:9 http://eu-west-1.ec2.archive.ubuntu.com/ubuntu xenial-updates/main Sources [346 kB]
+aws_instance.jenkins-instance (remote-exec): 0% [4 Sources store 0 B] [3 InRelease g
+aws_instance.jenkins-instance (remote-exec): 0% [4 Sources store 0 B] [3 InRelease g
+aws_instance.jenkins-instance (remote-exec): Get:10 http://eu-west-1.ec2.archive.ubuntu.com/ubuntu xenial-updates/restricted Sources [2,536 B]
+aws_instance.jenkins-instance (remote-exec): 0% [4 Sources store 0 B] [3 InRelease g
+aws_instance.jenkins-instance (remote-exec): 0% [4 Sources store 0 B] [3 InRelease g
+aws_instance.jenkins-instance (remote-exec): Get:11 http://eu-west-1.ec2.archive.ubuntu.com/ubuntu xenial-updates/universe Sources [268 kB]
+aws_instance.jenkins-instance (remote-exec): 0% [4 Sources store 0 B] [3 InRelease g
+aws_instance.jenkins-instance (remote-exec): Get:12 http://eu-west-1.ec2.archive.ubuntu.com/ubuntu xenial-updates/multiverse Sources [8,748 B]
+aws_instance.jenkins-instance (remote-exec): 0% [4 Sources store 0 B] [3 InRelease g
+aws_instance.jenkins-instance (remote-exec): 0% [4 Sources store 0 B] [3 InRelease g
+aws_instance.jenkins-instance (remote-exec): 0% [3 InRelease gpgv 107 kB] [Waiting f
+aws_instance.jenkins-instance (remote-exec): 0% [5 Sources store 0 B] [3 InRelease g
+aws_instance.jenkins-instance (remote-exec): 0% [3 InRelease gpgv 107 kB] [Waiting f
+aws_instance.jenkins-instance (remote-exec): 0% [6 Sources store 0 B] [3 InRelease g
+aws_instance.jenkins-instance (remote-exec): Get:13 http://eu-west-1.ec2.archive.ubuntu.com/ubuntu xenial-updates/main amd64 Packages [1,111 kB]
+aws_instance.jenkins-instance (remote-exec): 0% [6 Sources store 0 B] [3 InRelease g
+aws_instance.jenkins-instance (remote-exec): 0% [6 Sources store 0 B] [13 Packages 9
+aws_instance.jenkins-instance (remote-exec): 0% [6 Sources store 0 B] [7 InRelease 3
+aws_instance.jenkins-instance (remote-exec): Get:14 http://eu-west-1.ec2.archive.ubuntu.com/ubuntu xenial-updates/main Translation-en [424 kB]
+aws_instance.jenkins-instance (remote-exec): 0% [6 Sources store 0 B] [14 Translatio
+aws_instance.jenkins-instance (remote-exec): 0% [6 Sources store 0 B] [7 InRelease 3
+aws_instance.jenkins-instance (remote-exec): Get:15 http://eu-west-1.ec2.archive.ubuntu.com/ubuntu xenial-updates/restricted amd64 Packages [7,616 B]
+aws_instance.jenkins-instance (remote-exec): 0% [6 Sources store 0 B] [15 Packages 0
+aws_instance.jenkins-instance (remote-exec): 0% [6 Sources store 0 B] [7 InRelease 3
+aws_instance.jenkins-instance (remote-exec): Get:16 http://eu-west-1.ec2.archive.ubuntu.com/ubuntu xenial-updates/restricted Translation-en [2,272 B]
+aws_instance.jenkins-instance (remote-exec): 0% [6 Sources store 0 B] [16 Translatio
+aws_instance.jenkins-instance (remote-exec): 0% [6 Sources store 0 B] [7 InRelease 3
+aws_instance.jenkins-instance (remote-exec): Get:17 http://eu-west-1.ec2.archive.ubuntu.com/ubuntu xenial-updates/universe amd64 Packages [791 kB]
+aws_instance.jenkins-instance (remote-exec): 0% [6 Sources store 0 B] [17 Packages 0
+aws_instance.jenkins-instance (remote-exec): 0% [6 Sources store 0 B] [7 InRelease 4
+aws_instance.jenkins-instance (remote-exec): Get:18 http://eu-west-1.ec2.archive.ubuntu.com/ubuntu xenial-updates/universe Translation-en [330 kB]
+aws_instance.jenkins-instance (remote-exec): 0% [6 Sources store 0 B] [18 Translatio
+aws_instance.jenkins-instance (remote-exec): 0% [6 Sources store 0 B] [7 InRelease 4
+aws_instance.jenkins-instance (remote-exec): Get:19 http://eu-west-1.ec2.archive.ubuntu.com/ubuntu xenial-updates/multiverse amd64 Packages [16.8 kB]
+aws_instance.jenkins-instance (remote-exec): 0% [6 Sources store 0 B] [19 Packages 0
+aws_instance.jenkins-instance (remote-exec): 0% [6 Sources store 0 B] [7 InRelease 4
+aws_instance.jenkins-instance (remote-exec): Get:20 http://eu-west-1.ec2.archive.ubuntu.com/ubuntu xenial-updates/multiverse Translation-en [8,468 B]
+aws_instance.jenkins-instance (remote-exec): 0% [6 Sources store 0 B] [20 Translatio
+aws_instance.jenkins-instance (remote-exec): 0% [6 Sources store 0 B] [7 InRelease 4
+aws_instance.jenkins-instance (remote-exec): Get:21 http://eu-west-1.ec2.archive.ubuntu.com/ubuntu xenial-backports/main Sources [4,848 B]
+aws_instance.jenkins-instance (remote-exec): 0% [6 Sources store 0 B] [21 Sources 0
+aws_instance.jenkins-instance (remote-exec): 0% [6 Sources store 0 B] [7 InRelease 4
+aws_instance.jenkins-instance (remote-exec): Get:22 http://eu-west-1.ec2.archive.ubuntu.com/ubuntu xenial-backports/universe Sources [7,120 B]
+aws_instance.jenkins-instance (remote-exec): 0% [6 Sources store 0 B] [22 Sources 0
+aws_instance.jenkins-instance (remote-exec): 0% [6 Sources store 0 B] [7 InRelease 4
+aws_instance.jenkins-instance (remote-exec): Get:23 http://eu-west-1.ec2.archive.ubuntu.com/ubuntu xenial-backports/main amd64 Packages [7,280 B]
+aws_instance.jenkins-instance (remote-exec): 0% [6 Sources store 0 B] [23 Packages 0
+aws_instance.jenkins-instance (remote-exec): 0% [6 Sources store 0 B] [7 InRelease 4
+aws_instance.jenkins-instance (remote-exec): Get:24 http://eu-west-1.ec2.archive.ubuntu.com/ubuntu xenial-backports/main Translation-en [4,456 B]
+aws_instance.jenkins-instance (remote-exec): 0% [6 Sources store 0 B] [24 Translatio
+aws_instance.jenkins-instance (remote-exec): 0% [6 Sources store 0 B] [7 InRelease 4
+aws_instance.jenkins-instance (remote-exec): Get:25 http://eu-west-1.ec2.archive.ubuntu.com/ubuntu xenial-backports/universe amd64 Packages [8,064 B]
+aws_instance.jenkins-instance (remote-exec): 0% [6 Sources store 0 B] [25 Packages 0
+aws_instance.jenkins-instance (remote-exec): 0% [6 Sources store 0 B] [7 InRelease 4
+aws_instance.jenkins-instance (remote-exec): Get:26 http://eu-west-1.ec2.archive.ubuntu.com/ubuntu xenial-backports/universe Translation-en [4,328 B]
+aws_instance.jenkins-instance (remote-exec): 0% [6 Sources store 0 B] [26 Translatio
+aws_instance.jenkins-instance (remote-exec): 0% [6 Sources store 0 B] [7 InRelease 4
+aws_instance.jenkins-instance (remote-exec): 0% [6 Sources store 0 B]
+aws_instance.jenkins-instance (remote-exec): 0% [6 Sources store 0 B] [7 InRelease g
+aws_instance.jenkins-instance (remote-exec): 92% [6 Sources store 0 B]
+aws_instance.jenkins-instance (remote-exec): Get:27 http://security.ubuntu.com/ubuntu xenial-security/main Sources [162 kB]
+aws_instance.jenkins-instance (remote-exec): 91% [6 Sources store 0 B] [27 Sources 2
+aws_instance.jenkins-instance (remote-exec): 92% [6 Sources store 0 B]
+aws_instance.jenkins-instance (remote-exec): Get:28 http://security.ubuntu.com/ubuntu xenial-security/restricted Sources [2,116 B]
+aws_instance.jenkins-instance (remote-exec): 92% [6 Sources store 0 B] [Waiting for
+aws_instance.jenkins-instance (remote-exec): Get:29 http://security.ubuntu.com/ubuntu xenial-security/universe Sources [118 kB]
+aws_instance.jenkins-instance (remote-exec): 92% [6 Sources store 0 B] [29 Sources 5
+aws_instance.jenkins-instance (remote-exec): 92% [6 Sources store 0 B] [Waiting for
+aws_instance.jenkins-instance (remote-exec): Get:30 http://security.ubuntu.com/ubuntu xenial-security/multiverse Sources [3,408 B]
+aws_instance.jenkins-instance (remote-exec): 92% [6 Sources store 0 B] [30 Sources 2
+aws_instance.jenkins-instance (remote-exec): 92% [6 Sources store 0 B] [Waiting for
+aws_instance.jenkins-instance (remote-exec): Get:31 http://security.ubuntu.com/ubuntu xenial-security/main amd64 Packages [831 kB]
+aws_instance.jenkins-instance (remote-exec): 87% [6 Sources store 0 B] [31 Packages
+aws_instance.jenkins-instance (remote-exec): 92% [6 Sources store 0 B]
+aws_instance.jenkins-instance (remote-exec): Get:32 http://security.ubuntu.com/ubuntu xenial-security/main Translation-en [316 kB]
+aws_instance.jenkins-instance (remote-exec): 91% [6 Sources store 0 B] [32 Translati
+aws_instance.jenkins-instance (remote-exec): 92% [6 Sources store 0 B]
+aws_instance.jenkins-instance (remote-exec): Get:33 http://security.ubuntu.com/ubuntu xenial-security/restricted amd64 Packages [7,204 B]
+aws_instance.jenkins-instance (remote-exec): 92% [6 Sources store 0 B] [33 Packages
+aws_instance.jenkins-instance (remote-exec): 92% [6 Sources store 0 B]
+aws_instance.jenkins-instance (remote-exec): 93% [Waiting for headers]
+aws_instance.jenkins-instance (remote-exec): 93% [8 Sources store 0 B] [Waiting for
+aws_instance.jenkins-instance (remote-exec): 93% [Waiting for headers]
+aws_instance.jenkins-instance (remote-exec): 93% [9 Sources store 0 B] [Waiting for
+aws_instance.jenkins-instance (remote-exec): Get:34 http://security.ubuntu.com/ubuntu xenial-security/restricted Translation-en [2,152 B]
+aws_instance.jenkins-instance (remote-exec): 93% [9 Sources store 0 B] [34 Translati
+aws_instance.jenkins-instance (remote-exec): 93% [34 Translation-en 0 B/2,152 B 0%]
+aws_instance.jenkins-instance (remote-exec): 93% [10 Sources store 0 B] [34 Translat
+aws_instance.jenkins-instance (remote-exec): 93% [10 Sources store 0 B]
+aws_instance.jenkins-instance (remote-exec): 93% [Waiting for headers]
+aws_instance.jenkins-instance (remote-exec): 93% [11 Sources store 0 B] [Waiting for
+aws_instance.jenkins-instance (remote-exec): 94% [Waiting for headers]
+aws_instance.jenkins-instance (remote-exec): 94% [12 Sources store 0 B] [Waiting for
+aws_instance.jenkins-instance (remote-exec): 94% [Waiting for headers]
+aws_instance.jenkins-instance (remote-exec): 94% [13 Packages store 0 B] [Waiting fo
+aws_instance.jenkins-instance (remote-exec): Get:35 http://security.ubuntu.com/ubuntu xenial-security/universe amd64 Packages [486 kB]
+aws_instance.jenkins-instance (remote-exec): 91% [13 Packages store 0 B] [35 Package
+aws_instance.jenkins-instance (remote-exec): 94% [13 Packages store 0 B]
+aws_instance.jenkins-instance (remote-exec): Get:36 http://security.ubuntu.com/ubuntu xenial-security/universe Translation-en [199 kB]
+aws_instance.jenkins-instance (remote-exec): 93% [13 Packages store 0 B] [36 Transla
+aws_instance.jenkins-instance (remote-exec): 94% [13 Packages store 0 B]
+aws_instance.jenkins-instance (remote-exec): 94% [Waiting for headers]
+aws_instance.jenkins-instance (remote-exec): 94% [14 Translation-en store 0 B] [Wait
+aws_instance.jenkins-instance (remote-exec): Get:37 http://security.ubuntu.com/ubuntu xenial-security/multiverse amd64 Packages [5,728 B]
+aws_instance.jenkins-instance (remote-exec): 94% [14 Translation-en store 0 B] [37 P
+aws_instance.jenkins-instance (remote-exec): 94% [14 Translation-en store 0 B]
+aws_instance.jenkins-instance (remote-exec): Get:38 http://security.ubuntu.com/ubuntu xenial-security/multiverse Translation-en [2,708 B]
+aws_instance.jenkins-instance (remote-exec): 94% [14 Translation-en store 0 B] [38 T
+aws_instance.jenkins-instance (remote-exec): 94% [14 Translation-en store 0 B]
+aws_instance.jenkins-instance (remote-exec): 94% [Working]
+aws_instance.jenkins-instance (remote-exec): 94% [15 Packages store 0 B]
+aws_instance.jenkins-instance (remote-exec): 95% [Working]
+aws_instance.jenkins-instance (remote-exec): 95% [16 Translation-en store 0 B]
+aws_instance.jenkins-instance (remote-exec): 95% [Working]
+aws_instance.jenkins-instance (remote-exec): 95% [17 Packages store 0 B]
+aws_instance.jenkins-instance (remote-exec): 95% [Working]
+aws_instance.jenkins-instance (remote-exec): 95% [18 Translation-en store 0 B]
+aws_instance.jenkins-instance (remote-exec): 95% [Working]
+aws_instance.jenkins-instance (remote-exec): 95% [19 Packages store 0 B]
+aws_instance.jenkins-instance (remote-exec): 95% [Working]
+aws_instance.jenkins-instance (remote-exec): 95% [20 Translation-en store 0 B]
+aws_instance.jenkins-instance (remote-exec): 96% [Working]
+aws_instance.jenkins-instance (remote-exec): 96% [21 Sources store 0 B]
+aws_instance.jenkins-instance (remote-exec): 96% [Working]
+aws_instance.jenkins-instance (remote-exec): 96% [22 Sources store 0 B]
+aws_instance.jenkins-instance (remote-exec): 96% [Working]
+aws_instance.jenkins-instance (remote-exec): 96% [23 Packages store 0 B]
+aws_instance.jenkins-instance (remote-exec): 96% [Working]
+aws_instance.jenkins-instance (remote-exec): 96% [24 Translation-en store 0 B]
+aws_instance.jenkins-instance (remote-exec): 97% [Working]
+aws_instance.jenkins-instance (remote-exec): 97% [25 Packages store 0 B]
+aws_instance.jenkins-instance (remote-exec): 97% [Working]
+aws_instance.jenkins-instance (remote-exec): 97% [26 Translation-en store 0 B]
+aws_instance.jenkins-instance (remote-exec): 97% [Working]
+aws_instance.jenkins-instance (remote-exec): 97% [27 Sources store 0 B]
+aws_instance.jenkins-instance (remote-exec): 97% [Working]
+aws_instance.jenkins-instance (remote-exec): 97% [28 Sources store 0 B]
+aws_instance.jenkins-instance (remote-exec): 98% [Working]
+aws_instance.jenkins-instance (remote-exec): 98% [29 Sources store 0 B]
+aws_instance.jenkins-instance (remote-exec): 98% [Working]
+aws_instance.jenkins-instance (remote-exec): 98% [30 Sources store 0 B]
+aws_instance.jenkins-instance (remote-exec): 98% [Working]
+aws_instance.jenkins-instance (remote-exec): 98% [31 Packages store 0 B]
+aws_instance.jenkins-instance (remote-exec): 98% [Working]
+aws_instance.jenkins-instance (remote-exec): 98% [32 Translation-en store 0 B]
+aws_instance.jenkins-instance (remote-exec): 99% [Working]
+aws_instance.jenkins-instance (remote-exec): 99% [33 Packages store 0 B]
+aws_instance.jenkins-instance (remote-exec): 99% [Working]
+aws_instance.jenkins-instance (remote-exec): 99% [34 Translation-en store 0 B]
+aws_instance.jenkins-instance (remote-exec): 99% [Working]
+aws_instance.jenkins-instance (remote-exec): 99% [35 Packages store 0 B]
+aws_instance.jenkins-instance (remote-exec): 99% [Working]
+aws_instance.jenkins-instance (remote-exec): 99% [36 Translation-en store 0 B]
+aws_instance.jenkins-instance (remote-exec): 100% [Working]
+aws_instance.jenkins-instance (remote-exec): 100% [37 Packages store 0 B]
+aws_instance.jenkins-instance (remote-exec): 100% [Working]
+aws_instance.jenkins-instance (remote-exec): 100% [38 Translation-en store 0 B]
+aws_instance.jenkins-instance (remote-exec): 100% [Working]
+aws_instance.jenkins-instance (remote-exec): Fetched 14.6 MB in 2s (5,813 kB/s)
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 0%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 0%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 1%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 6%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 6%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 9%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 9%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 9%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 9%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 9%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 9%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 44%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 44%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 64%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 64%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 65%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 65%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 65%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 65%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 69%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 72%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 72%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 77%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 77%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 78%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 78%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 78%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 78%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 82%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 82%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 84%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 84%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 84%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 84%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 84%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 84%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 84%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 84%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 84%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 84%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 84%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 84%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 84%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 84%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 89%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 89%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 95%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 95%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 95%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 95%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 95%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 95%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 97%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 97%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 99%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 99%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 99%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 99%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 99%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 99%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... Done
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 0%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... 100%
+aws_instance.jenkins-instance (remote-exec): Reading package lists... Done
+aws_instance.jenkins-instance (remote-exec): Building dependency tree... 0%
+aws_instance.jenkins-instance (remote-exec): Building dependency tree... 0%
+aws_instance.jenkins-instance (remote-exec): Building dependency tree... 50%
+aws_instance.jenkins-instance (remote-exec): Building dependency tree... 50%
+aws_instance.jenkins-instance (remote-exec): Building dependency tree
+aws_instance.jenkins-instance (remote-exec): Reading state information... 0%
+aws_instance.jenkins-instance (remote-exec): Reading state information... 7%
+aws_instance.jenkins-instance (remote-exec): Reading state information... Done
+aws_instance.jenkins-instance (remote-exec): The following additional packages will be installed:
+aws_instance.jenkins-instance (remote-exec):   libpython-stdlib
+aws_instance.jenkins-instance (remote-exec):   libpython2.7-minimal
+aws_instance.jenkins-instance (remote-exec):   libpython2.7-stdlib python-minimal
+aws_instance.jenkins-instance (remote-exec):   python2.7 python2.7-minimal
+aws_instance.jenkins-instance (remote-exec): Suggested packages:
+aws_instance.jenkins-instance (remote-exec):   python-doc python-tk python2.7-doc
+aws_instance.jenkins-instance (remote-exec):   binutils binfmt-support
+aws_instance.jenkins-instance (remote-exec): The following NEW packages will be installed:
+aws_instance.jenkins-instance (remote-exec):   libpython-stdlib
+aws_instance.jenkins-instance (remote-exec):   libpython2.7-minimal
+aws_instance.jenkins-instance (remote-exec):   libpython2.7-stdlib python
+aws_instance.jenkins-instance (remote-exec):   python-minimal python2.7
+aws_instance.jenkins-instance (remote-exec):   python2.7-minimal
+aws_instance.jenkins-instance (remote-exec): 0 upgraded, 7 newly installed, 0 to remove and 258 not upgraded.
+aws_instance.jenkins-instance (remote-exec): Need to get 3,880 kB of archives.
+aws_instance.jenkins-instance (remote-exec): After this operation, 16.6 MB of additional disk space will be used.
+aws_instance.jenkins-instance (remote-exec): 0% [Working]
+aws_instance.jenkins-instance (remote-exec): Get:1 http://eu-west-1.ec2.archive.ubuntu.com/ubuntu xenial-updates/main amd64 libpython2.7-minimal amd64 2.7.12-1ubuntu0~16.04.9 [338 kB]
+aws_instance.jenkins-instance (remote-exec): 0% [1 libpython2.7-minimal 14.1 kB/338
+aws_instance.jenkins-instance (remote-exec): 10% [Working]
+aws_instance.jenkins-instance (remote-exec): Get:2 http://eu-west-1.ec2.archive.ubuntu.com/ubuntu xenial-updates/main amd64 python2.7-minimal amd64 2.7.12-1ubuntu0~16.04.9 [1,262 kB]
+aws_instance.jenkins-instance (remote-exec): 10% [2 python2.7-minimal 24.2 kB/1,262
+aws_instance.jenkins-instance (remote-exec): 39% [Working]
+aws_instance.jenkins-instance (remote-exec): Get:3 http://eu-west-1.ec2.archive.ubuntu.com/ubuntu xenial-updates/main amd64 python-minimal amd64 2.7.12-1~16.04 [28.1 kB]
+aws_instance.jenkins-instance (remote-exec): 39% [3 python-minimal 24.6 kB/28.1 kB 8
+aws_instance.jenkins-instance (remote-exec): 42% [Working]
+aws_instance.jenkins-instance (remote-exec): Get:4 http://eu-west-1.ec2.archive.ubuntu.com/ubuntu xenial-updates/main amd64 libpython2.7-stdlib amd64 2.7.12-1ubuntu0~16.04.9 [1,884 kB]
+aws_instance.jenkins-instance (remote-exec): 42% [4 libpython2.7-stdlib 9,336 B/1,88
+aws_instance.jenkins-instance (remote-exec): 84% [Working]
+aws_instance.jenkins-instance (remote-exec): Get:5 http://eu-west-1.ec2.archive.ubuntu.com/ubuntu xenial-updates/main amd64 python2.7 amd64 2.7.12-1ubuntu0~16.04.9 [224 kB]
+aws_instance.jenkins-instance (remote-exec): 84% [5 python2.7 25.3 kB/224 kB 11%]
+aws_instance.jenkins-instance (remote-exec): 91% [Working]
+aws_instance.jenkins-instance (remote-exec): Get:6 http://eu-west-1.ec2.archive.ubuntu.com/ubuntu xenial-updates/main amd64 libpython-stdlib amd64 2.7.12-1~16.04 [7,768 B]
+aws_instance.jenkins-instance (remote-exec): 91% [6 libpython-stdlib 7,768 B/7,768 B
+aws_instance.jenkins-instance (remote-exec): 94% [Working]
+aws_instance.jenkins-instance (remote-exec): Get:7 http://eu-west-1.ec2.archive.ubuntu.com/ubuntu xenial-updates/main amd64 python amd64 2.7.12-1~16.04 [137 kB]
+aws_instance.jenkins-instance (remote-exec): 95% [7 python 24.2 kB/137 kB 18%]
+aws_instance.jenkins-instance (remote-exec): 100% [Working]
+aws_instance.jenkins-instance (remote-exec): Fetched 3,880 kB in 0s (51.2 MB/s)
+aws_instance.jenkins-instance (remote-exec): Selecting previously unselected package libpython2.7-minimal:amd64.
+aws_instance.jenkins-instance (remote-exec): (Reading database ...
+aws_instance.jenkins-instance (remote-exec): (Reading database ... 5%
+aws_instance.jenkins-instance (remote-exec): (Reading database ... 10%
+aws_instance.jenkins-instance (remote-exec): (Reading database ... 15%
+aws_instance.jenkins-instance (remote-exec): (Reading database ... 20%
+aws_instance.jenkins-instance (remote-exec): (Reading database ... 25%
+aws_instance.jenkins-instance (remote-exec): (Reading database ... 30%
+aws_instance.jenkins-instance (remote-exec): (Reading database ... 35%
+aws_instance.jenkins-instance (remote-exec): (Reading database ... 40%
+aws_instance.jenkins-instance (remote-exec): (Reading database ... 45%
+aws_instance.jenkins-instance (remote-exec): (Reading database ... 50%
+aws_instance.jenkins-instance (remote-exec): (Reading database ... 55%
+aws_instance.jenkins-instance (remote-exec): (Reading database ... 60%
+aws_instance.jenkins-instance (remote-exec): (Reading database ... 65%
+aws_instance.jenkins-instance (remote-exec): (Reading database ... 70%
+aws_instance.jenkins-instance (remote-exec): (Reading database ... 75%
+aws_instance.jenkins-instance (remote-exec): (Reading database ... 80%
+aws_instance.jenkins-instance (remote-exec): (Reading database ... 85%
+aws_instance.jenkins-instance (remote-exec): (Reading database ... 90%
+aws_instance.jenkins-instance (remote-exec): (Reading database ... 95%
+aws_instance.jenkins-instance (remote-exec): (Reading database ... 100%
+aws_instance.jenkins-instance (remote-exec): (Reading database ... 53649 files and directories currently installed.)
+aws_instance.jenkins-instance (remote-exec): Preparing to unpack .../libpython2.7-minimal_2.7.12-1ubuntu0~16.04.9_amd64.deb ...
+aws_instance.jenkins-instance (remote-exec): Unpacking libpython2.7-minimal:amd64 (2.7.12-1ubuntu0~16.04.9) ...
+aws_instance.jenkins-instance (remote-exec): Selecting previously unselected package python2.7-minimal.
+aws_instance.jenkins-instance (remote-exec): Preparing to unpack .../python2.7-minimal_2.7.12-1ubuntu0~16.04.9_amd64.deb ...
+aws_instance.jenkins-instance (remote-exec): Unpacking python2.7-minimal (2.7.12-1ubuntu0~16.04.9) ...
+aws_instance.jenkins-instance (remote-exec): Selecting previously unselected package python-minimal.
+aws_instance.jenkins-instance (remote-exec): Preparing to unpack .../python-minimal_2.7.12-1~16.04_amd64.deb ...
+aws_instance.jenkins-instance (remote-exec): Unpacking python-minimal (2.7.12-1~16.04) ...
+aws_instance.jenkins-instance (remote-exec): Selecting previously unselected package libpython2.7-stdlib:amd64.
+aws_instance.jenkins-instance (remote-exec): Preparing to unpack .../libpython2.7-stdlib_2.7.12-1ubuntu0~16.04.9_amd64.deb ...
+aws_instance.jenkins-instance (remote-exec): Unpacking libpython2.7-stdlib:amd64 (2.7.12-1ubuntu0~16.04.9) ...
+aws_instance.jenkins-instance (remote-exec): Selecting previously unselected package python2.7.
+aws_instance.jenkins-instance (remote-exec): Preparing to unpack .../python2.7_2.7.12-1ubuntu0~16.04.9_amd64.deb ...
+aws_instance.jenkins-instance (remote-exec): Unpacking python2.7 (2.7.12-1ubuntu0~16.04.9) ...
+aws_instance.jenkins-instance (remote-exec): Selecting previously unselected package libpython-stdlib:amd64.
+aws_instance.jenkins-instance (remote-exec): Preparing to unpack .../libpython-stdlib_2.7.12-1~16.04_amd64.deb ...
+aws_instance.jenkins-instance (remote-exec): Unpacking libpython-stdlib:amd64 (2.7.12-1~16.04) ...
+aws_instance.jenkins-instance (remote-exec): Processing triggers for man-db (2.7.5-1) ...
+aws_instance.jenkins-instance (remote-exec): Processing triggers for mime-support (3.59ubuntu1) ...
+aws_instance.jenkins-instance (remote-exec): Setting up libpython2.7-minimal:amd64 (2.7.12-1ubuntu0~16.04.9) ...
+aws_instance.jenkins-instance (remote-exec): Setting up python2.7-minimal (2.7.12-1ubuntu0~16.04.9) ...
+aws_instance.jenkins-instance (remote-exec): Linking and byte-compiling packages for runtime python2.7...
+aws_instance.jenkins-instance (remote-exec): Setting up python-minimal (2.7.12-1~16.04) ...
+aws_instance.jenkins-instance (remote-exec): Selecting previously unselected package python.
+aws_instance.jenkins-instance (remote-exec): (Reading database ...
+aws_instance.jenkins-instance (remote-exec): (Reading database ... 5%
+aws_instance.jenkins-instance (remote-exec): (Reading database ... 10%
+aws_instance.jenkins-instance (remote-exec): (Reading database ... 15%
+aws_instance.jenkins-instance (remote-exec): (Reading database ... 20%
+aws_instance.jenkins-instance (remote-exec): (Reading database ... 25%
+aws_instance.jenkins-instance (remote-exec): (Reading database ... 30%
+aws_instance.jenkins-instance (remote-exec): (Reading database ... 35%
+aws_instance.jenkins-instance (remote-exec): (Reading database ... 40%
+aws_instance.jenkins-instance (remote-exec): (Reading database ... 45%
+aws_instance.jenkins-instance (remote-exec): (Reading database ... 50%
+aws_instance.jenkins-instance (remote-exec): (Reading database ... 55%
+aws_instance.jenkins-instance (remote-exec): (Reading database ... 60%
+aws_instance.jenkins-instance (remote-exec): (Reading database ... 65%
+aws_instance.jenkins-instance (remote-exec): (Reading database ... 70%
+aws_instance.jenkins-instance (remote-exec): (Reading database ... 75%
+aws_instance.jenkins-instance (remote-exec): (Reading database ... 80%
+aws_instance.jenkins-instance (remote-exec): (Reading database ... 85%
+aws_instance.jenkins-instance (remote-exec): (Reading database ... 90%
+aws_instance.jenkins-instance (remote-exec): (Reading database ... 95%
+aws_instance.jenkins-instance (remote-exec): (Reading database ... 100%
+aws_instance.jenkins-instance (remote-exec): (Reading database ... 54395 files and directories currently installed.)
+aws_instance.jenkins-instance (remote-exec): Preparing to unpack .../python_2.7.12-1~16.04_amd64.deb ...
+aws_instance.jenkins-instance (remote-exec): Unpacking python (2.7.12-1~16.04) ...
+aws_instance.jenkins-instance (remote-exec): Processing triggers for man-db (2.7.5-1) ...
+aws_instance.jenkins-instance (remote-exec): Setting up libpython2.7-stdlib:amd64 (2.7.12-1ubuntu0~16.04.9) ...
+aws_instance.jenkins-instance (remote-exec): Setting up python2.7 (2.7.12-1ubuntu0~16.04.9) ...
+aws_instance.jenkins-instance: Still creating... [50s elapsed]
+aws_instance.jenkins-instance (remote-exec): Setting up libpython-stdlib:amd64 (2.7.12-1~16.04) ...
+aws_instance.jenkins-instance (remote-exec): Setting up python (2.7.12-1~16.04) ...
+aws_instance.jenkins-instance (remote-exec): |. ..   .         |
+aws_instance.jenkins-instance (remote-exec): | .o .   S.       |
+aws_instance.jenkins-instance (remote-exec): | B.O . .. E      |
+aws_instance.jenkins-instance (remote-exec): |. &o+ ..         |
+aws_instance.jenkins-instance (remote-exec): |.BoB. .          |
+aws_instance.jenkins-instance (remote-exec): |o=@o+o           |
+aws_instance.jenkins-instance (remote-exec): +----[SHA256]-----+
+aws_instance.jenkins-instance (remote-exec): Generating public/private ecdsa key pair.
+aws_instance.jenkins-instance (remote-exec): Your identification has been saved in /etc/ssh/ssh_host_ecdsa_key.
+aws_instance.jenkins-instance (remote-exec): Your public key has been saved in /etc/ssh/ssh_host_ecdsa_key.pub.
+aws_instance.jenkins-instance (remote-exec): The key fingerprint is:
+aws_instance.jenkins-instance (remote-exec): SHA256:95Zy80pCteaZm0vTHB3O0vArDhiGs3tHNeFa+nLUn6Q root@ip-10-0-1-76
+aws_instance.jenkins-instance (remote-exec): The key's randomart image is:
+aws_instance.jenkins-instance (remote-exec): +---[ECDSA 256]---+
+aws_instance.jenkins-instance (remote-exec): |                 |
+aws_instance.jenkins-instance (remote-exec): |             .   |
+aws_instance.jenkins-instance (remote-exec): |            o... |
+aws_instance.jenkins-instance (remote-exec): |        .  . **..|
+aws_instance.jenkins-instance (remote-exec): |       oSoo B.+=.|
+aws_instance.jenkins-instance (remote-exec): |        +ooB B.+.|
+aws_instance.jenkins-instance (remote-exec): |       . .+./.=.o|
+aws_instance.jenkins-instance (remote-exec): |        .. XoE...|
+aws_instance.jenkins-instance (remote-exec): |       .. . B+.  |
+aws_instance.jenkins-instance (remote-exec): +----[SHA256]-----+
+aws_instance.jenkins-instance (remote-exec): Generating public/private ed25519 key pair.
+aws_instance.jenkins-instance (remote-exec): Your identification has been saved in /etc/ssh/ssh_host_ed25519_key.
+aws_instance.jenkins-instance (remote-exec): Your public key has been saved in /etc/ssh/ssh_host_ed25519_key.pub.
+aws_instance.jenkins-instance (remote-exec): The key fingerprint is:
+aws_instance.jenkins-instance (remote-exec): SHA256:IxFDvWMMbY9ZWfb+OcgIi9XYUpzcu1iRrUpJZQiBE0A root@ip-10-0-1-76
+aws_instance.jenkins-instance (remote-exec): The key's randomart image is:
+aws_instance.jenkins-instance (remote-exec): +--[ED25519 256]--+
+aws_instance.jenkins-instance (remote-exec): |    .E=+oooo+o   |
+aws_instance.jenkins-instance (remote-exec): |      .=+ =o=.o  |
+aws_instance.jenkins-instance (remote-exec): |      .+.* * +.. |
+aws_instance.jenkins-instance (remote-exec): |       .B B ..+  |
+aws_instance.jenkins-instance (remote-exec): |      ..S* = +.  |
+aws_instance.jenkins-instance (remote-exec): |       .o.= * o..|
+aws_instance.jenkins-instance (remote-exec): |       . . + + o.|
+aws_instance.jenkins-instance (remote-exec): |                .|
+aws_instance.jenkins-instance (remote-exec): |                 |
+aws_instance.jenkins-instance (remote-exec): +----[SHA256]-----+
+aws_instance.jenkins-instance (remote-exec): Generating locales (this might take a while)...
+aws_instance.jenkins-instance (remote-exec):   en_US.UTF-8... done
+aws_instance.jenkins-instance (remote-exec): Generation complete.
+aws_instance.jenkins-instance (remote-exec): Cloud-init v. 0.7.8 running 'modules:config' at Sun, 15 Mar 2020 09:15:49 +0000. Up 12.24 seconds.
+aws_instance.jenkins-instance (remote-exec): vgchange...
+aws_instance.jenkins-instance (remote-exec): checking xvdh
+aws_instance.jenkins-instance (remote-exec): DEVICEEXISTS: 0
+aws_instance.jenkins-instance (remote-exec): waiting lsblk...
+aws_instance.jenkins-instance (remote-exec): Sun Mar 15 09:15:51 UTC 2020
+aws_instance.jenkins-instance: Still creating... [1m0s elapsed]
+aws_instance.jenkins-instance (remote-exec): +----[SHA256]-----+
+aws_instance.jenkins-instance (remote-exec): Generating public/private ecdsa key pair.
+aws_instance.jenkins-instance (remote-exec): Your identification has been saved in /etc/ssh/ssh_host_ecdsa_key.
+aws_instance.jenkins-instance (remote-exec): Your public key has been saved in /etc/ssh/ssh_host_ecdsa_key.pub.
+aws_instance.jenkins-instance (remote-exec): The key fingerprint is:
+aws_instance.jenkins-instance (remote-exec): SHA256:95Zy80pCteaZm0vTHB3O0vArDhiGs3tHNeFa+nLUn6Q root@ip-10-0-1-76
+aws_instance.jenkins-instance (remote-exec): The key's randomart image is:
+aws_instance.jenkins-instance (remote-exec): +---[ECDSA 256]---+
+aws_instance.jenkins-instance (remote-exec): |                 |
+aws_instance.jenkins-instance (remote-exec): |             .   |
+aws_instance.jenkins-instance (remote-exec): |            o... |
+aws_instance.jenkins-instance (remote-exec): |        .  . **..|
+aws_instance.jenkins-instance (remote-exec): |       oSoo B.+=.|
+aws_instance.jenkins-instance (remote-exec): |        +ooB B.+.|
+aws_instance.jenkins-instance (remote-exec): |       . .+./.=.o|
+aws_instance.jenkins-instance (remote-exec): |        .. XoE...|
+aws_instance.jenkins-instance (remote-exec): |       .. . B+.  |
+aws_instance.jenkins-instance (remote-exec): +----[SHA256]-----+
+aws_instance.jenkins-instance (remote-exec): Generating public/private ed25519 key pair.
+aws_instance.jenkins-instance (remote-exec): Your identification has been saved in /etc/ssh/ssh_host_ed25519_key.
+aws_instance.jenkins-instance (remote-exec): Your public key has been saved in /etc/ssh/ssh_host_ed25519_key.pub.
+aws_instance.jenkins-instance (remote-exec): The key fingerprint is:
+aws_instance.jenkins-instance (remote-exec): SHA256:IxFDvWMMbY9ZWfb+OcgIi9XYUpzcu1iRrUpJZQiBE0A root@ip-10-0-1-76
+aws_instance.jenkins-instance (remote-exec): The key's randomart image is:
+aws_instance.jenkins-instance (remote-exec): +--[ED25519 256]--+
+aws_instance.jenkins-instance (remote-exec): |    .E=+oooo+o   |
+aws_instance.jenkins-instance (remote-exec): |      .=+ =o=.o  |
+aws_instance.jenkins-instance (remote-exec): |      .+.* * +.. |
+aws_instance.jenkins-instance (remote-exec): |       .B B ..+  |
+aws_instance.jenkins-instance (remote-exec): |      ..S* = +.  |
+aws_instance.jenkins-instance (remote-exec): |       .o.= * o..|
+aws_instance.jenkins-instance (remote-exec): |       . . + + o.|
+aws_instance.jenkins-instance (remote-exec): |                .|
+aws_instance.jenkins-instance (remote-exec): |                 |
+aws_instance.jenkins-instance (remote-exec): +----[SHA256]-----+
+aws_instance.jenkins-instance (remote-exec): Generating locales (this might take a while)...
+aws_instance.jenkins-instance (remote-exec):   en_US.UTF-8... done
+aws_instance.jenkins-instance (remote-exec): Generation complete.
+aws_instance.jenkins-instance (remote-exec): Cloud-init v. 0.7.8 running 'modules:config' at Sun, 15 Mar 2020 09:15:49 +0000. Up 12.24 seconds.
+aws_instance.jenkins-instance (remote-exec): vgchange...
+aws_instance.jenkins-instance (remote-exec): checking xvdh
+aws_instance.jenkins-instance (remote-exec): DEVICEEXISTS: 0
+aws_instance.jenkins-instance (remote-exec): waiting lsblk...
+aws_instance.jenkins-instance (remote-exec): Sun Mar 15 09:15:51 UTC 2020
+aws_instance.jenkins-instance (remote-exec): Sun Mar 15 09:16:06 UTC 2020
+aws_instance.jenkins-instance (remote-exec): marking DEVICEEXISTS as NULL
+aws_instance.jenkins-instance (remote-exec): checking xvdh
+aws_instance.jenkins-instance (remote-exec): DEVICEEXISTS: 0
+aws_instance.jenkins-instance (remote-exec): waiting lsblk...
+aws_instance.jenkins-instance (remote-exec): Sun Mar 15 09:16:06 UTC 2020
+aws_instance.jenkins-instance: Creation complete after 1m2s [id=i-015686bcb2a14c885]
+aws_cloudwatch_metric_alarm.instance-health-check: Creating...
+aws_cloudwatch_metric_alarm.cpu-utilization: Creating...
+aws_volume_attachment.jenkins-data-attachment: Creating...
+aws_cloudwatch_metric_alarm.instance-health-check: Creation complete after 2s [id=instance-health-check]
+aws_cloudwatch_metric_alarm.cpu-utilization: Creation complete after 2s [id=high-cpu-utilization-alarm]
+aws_volume_attachment.jenkins-data-attachment: Still creating... [10s elapsed]
+aws_volume_attachment.jenkins-data-attachment: Still creating... [20s elapsed]
+aws_volume_attachment.jenkins-data-attachment: Provisioning with 'local-exec'...
+aws_volume_attachment.jenkins-data-attachment (local-exec): Executing: ["/bin/sh" "-c" "      sleep 30;\n\t  >hosts.ini;\n\t  echo \"[ansible]\" | tee -a hosts.ini;\n\t  echo \"52.211.105.7 ansible_user=ubuntu ansible_ssh_private_key_file=mykey\" | tee -a hosts.ini;\n      export ANSIBLE_HOST_KEY_CHECKING=False;\n\t  ansible-playbook -u ubuntu --private-key mykey -i hosts.ini playbooks/install_java.yaml\n\t  ansible-playbook -u ubuntu --private-key mykey -i hosts.ini playbooks/install_jenkins.yaml\n"]
+aws_volume_attachment.jenkins-data-attachment: Still creating... [30s elapsed]
+aws_volume_attachment.jenkins-data-attachment: Still creating... [40s elapsed]
+aws_volume_attachment.jenkins-data-attachment: Still creating... [50s elapsed]
+aws_volume_attachment.jenkins-data-attachment (local-exec): [ansible]
+aws_volume_attachment.jenkins-data-attachment (local-exec): 52.211.105.7 ansible_user=ubuntu ansible_ssh_private_key_file=mykey
+
+aws_volume_attachment.jenkins-data-attachment (local-exec): PLAY [Install Oracle Java version 8] *******************************************
+
+aws_volume_attachment.jenkins-data-attachment (local-exec): TASK [Gathering Facts] *********************************************************
+aws_volume_attachment.jenkins-data-attachment: Still creating... [1m0s elapsed]
+aws_volume_attachment.jenkins-data-attachment (local-exec): ok: [52.211.105.7]
+
+aws_volume_attachment.jenkins-data-attachment (local-exec): TASK [Install Java 8] **********************************************************
+aws_volume_attachment.jenkins-data-attachment: Still creating... [1m10s elapsed]
+aws_volume_attachment.jenkins-data-attachment: Still creating... [1m20s elapsed]
+aws_volume_attachment.jenkins-data-attachment: Still creating... [1m30s elapsed]
+aws_volume_attachment.jenkins-data-attachment (local-exec):  [WARNING]: Updating cache and auto-installing missing dependency: python-apt
+aws_volume_attachment.jenkins-data-attachment (local-exec):  [WARNING]: Could not find aptitude. Using apt-get instead
+aws_volume_attachment.jenkins-data-attachment (local-exec): changed: [52.211.105.7]
+
+aws_volume_attachment.jenkins-data-attachment (local-exec): PLAY RECAP *********************************************************************
+aws_volume_attachment.jenkins-data-attachment (local-exec): 52.211.105.7               : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+
+
+aws_volume_attachment.jenkins-data-attachment (local-exec): PLAY [Install Jenkins] *********************************************************
+
+aws_volume_attachment.jenkins-data-attachment (local-exec): TASK [Ensure the jenkins apt repository key is installed] **********************
+aws_volume_attachment.jenkins-data-attachment: Still creating... [1m40s elapsed]
+aws_volume_attachment.jenkins-data-attachment (local-exec): [DEPRECATION WARNING]: Distribution Ubuntu 16.04 on host 52.211.105.7 should
+aws_volume_attachment.jenkins-data-attachment (local-exec): use /usr/bin/python3, but is using /usr/bin/python for backward compatibility
+aws_volume_attachment.jenkins-data-attachment (local-exec): with prior Ansible releases. A future Ansible release will default to using the
+aws_volume_attachment.jenkins-data-attachment (local-exec):  discovered platform python for this host. See https://docs.ansible.com/ansible
+aws_volume_attachment.jenkins-data-attachment (local-exec): /2.8/reference_appendices/interpreter_discovery.html for more information. This
+aws_volume_attachment.jenkins-data-attachment (local-exec):  feature will be removed in version 2.12. Deprecation warnings can be disabled
+aws_volume_attachment.jenkins-data-attachment (local-exec): by setting deprecation_warnings=False in ansible.cfg.
+aws_volume_attachment.jenkins-data-attachment (local-exec): changed: [52.211.105.7]
+
+aws_volume_attachment.jenkins-data-attachment (local-exec): TASK [Ensure the repository is configured] *************************************
+aws_volume_attachment.jenkins-data-attachment: Still creating... [1m50s elapsed]
+aws_volume_attachment.jenkins-data-attachment (local-exec): changed: [52.211.105.7]
+
+aws_volume_attachment.jenkins-data-attachment (local-exec): TASK [Install Jenkins] *********************************************************
+aws_volume_attachment.jenkins-data-attachment: Still creating... [2m0s elapsed]
+aws_volume_attachment.jenkins-data-attachment: Still creating... [2m10s elapsed]
+aws_volume_attachment.jenkins-data-attachment: Still creating... [2m20s elapsed]
+aws_volume_attachment.jenkins-data-attachment: Still creating... [2m30s elapsed]
+aws_volume_attachment.jenkins-data-attachment (local-exec):  [WARNING]: Could not find aptitude. Using apt-get instead
+aws_volume_attachment.jenkins-data-attachment (local-exec): changed: [52.211.105.7]
+
+aws_volume_attachment.jenkins-data-attachment (local-exec): TASK [Start & Enable Jenkins] **************************************************
+aws_volume_attachment.jenkins-data-attachment: Still creating... [2m40s elapsed]
+aws_volume_attachment.jenkins-data-attachment (local-exec): ok: [52.211.105.7]
+
+aws_volume_attachment.jenkins-data-attachment (local-exec): TASK [Stop Jenkins] ************************************************************
+aws_volume_attachment.jenkins-data-attachment: Still creating... [2m50s elapsed]
+aws_volume_attachment.jenkins-data-attachment (local-exec):  [WARNING]: Consider using the service module rather than running 'service'.
+aws_volume_attachment.jenkins-data-attachment (local-exec): If you need to use command because service is insufficient you can add 'warn:
+aws_volume_attachment.jenkins-data-attachment (local-exec): false' to this command task or set 'command_warnings=False' in ansible.cfg to
+aws_volume_attachment.jenkins-data-attachment (local-exec): get rid of this message.
+aws_volume_attachment.jenkins-data-attachment (local-exec): changed: [52.211.105.7]
+
+aws_volume_attachment.jenkins-data-attachment (local-exec): TASK [Start Jenkins on 8081] ***************************************************
+aws_volume_attachment.jenkins-data-attachment (local-exec): changed: [52.211.105.7]
+
+aws_volume_attachment.jenkins-data-attachment (local-exec): TASK [Sleep for 30 seconds and continue with play] *****************************
+aws_volume_attachment.jenkins-data-attachment: Still creating... [3m0s elapsed]
+aws_volume_attachment.jenkins-data-attachment: Still creating... [3m10s elapsed]
+aws_volume_attachment.jenkins-data-attachment: Still creating... [3m20s elapsed]
+aws_volume_attachment.jenkins-data-attachment (local-exec): ok: [52.211.105.7]
+
+aws_volume_attachment.jenkins-data-attachment (local-exec): TASK [Get init password Jenkins] ***********************************************
+aws_volume_attachment.jenkins-data-attachment: Still creating... [3m30s elapsed]
+aws_volume_attachment.jenkins-data-attachment (local-exec): ok: [52.211.105.7]
+
+aws_volume_attachment.jenkins-data-attachment (local-exec): TASK [Print init password Jenkins] *********************************************
+aws_volume_attachment.jenkins-data-attachment (local-exec): ok: [52.211.105.7] => {
+aws_volume_attachment.jenkins-data-attachment (local-exec):     "result.stdout": "5abdd4cf0e194ebfae4eea7bb6b81b3a"
+aws_volume_attachment.jenkins-data-attachment (local-exec): }
+
+aws_volume_attachment.jenkins-data-attachment (local-exec): PLAY RECAP *********************************************************************
+aws_volume_attachment.jenkins-data-attachment (local-exec): 52.211.105.7               : ok=9    changed=5    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+
+aws_volume_attachment.jenkins-data-attachment: Provisioning with 'remote-exec'...
+aws_volume_attachment.jenkins-data-attachment (remote-exec): Connecting to remote host via SSH...
+aws_volume_attachment.jenkins-data-attachment (remote-exec):   Host: 52.211.105.7
+aws_volume_attachment.jenkins-data-attachment (remote-exec):   User: ubuntu
+aws_volume_attachment.jenkins-data-attachment (remote-exec):   Password: false
+aws_volume_attachment.jenkins-data-attachment (remote-exec):   Private key: true
+aws_volume_attachment.jenkins-data-attachment (remote-exec):   Certificate: false
+aws_volume_attachment.jenkins-data-attachment (remote-exec):   SSH Agent: false
+aws_volume_attachment.jenkins-data-attachment (remote-exec):   Checking Host Key: false
+aws_volume_attachment.jenkins-data-attachment (remote-exec): Connected!
+aws_volume_attachment.jenkins-data-attachment (remote-exec): Generating locales (this might take a while)...
+aws_volume_attachment.jenkins-data-attachment (remote-exec):   en_US.UTF-8... done
+aws_volume_attachment.jenkins-data-attachment (remote-exec): Generation complete.
+aws_volume_attachment.jenkins-data-attachment (remote-exec): Cloud-init v. 0.7.8 running 'modules:config' at Sun, 15 Mar 2020 09:15:49 +0000. Up 12.24 seconds.
+aws_volume_attachment.jenkins-data-attachment (remote-exec): vgchange...
+aws_volume_attachment.jenkins-data-attachment (remote-exec): checking xvdh
+aws_volume_attachment.jenkins-data-attachment (remote-exec): DEVICEEXISTS: 0
+aws_volume_attachment.jenkins-data-attachment (remote-exec): waiting lsblk...
+aws_volume_attachment.jenkins-data-attachment (remote-exec): Sun Mar 15 09:15:51 UTC 2020
+aws_volume_attachment.jenkins-data-attachment (remote-exec): Sun Mar 15 09:16:06 UTC 2020
+aws_volume_attachment.jenkins-data-attachment (remote-exec): marking DEVICEEXISTS as NULL
+aws_volume_attachment.jenkins-data-attachment (remote-exec): checking xvdh
+aws_volume_attachment.jenkins-data-attachment (remote-exec): DEVICEEXISTS: 0
+aws_volume_attachment.jenkins-data-attachment (remote-exec): waiting lsblk...
+aws_volume_attachment.jenkins-data-attachment (remote-exec): Sun Mar 15 09:16:06 UTC 2020
+aws_volume_attachment.jenkins-data-attachment (remote-exec): Sun Mar 15 09:16:21 UTC 2020
+aws_volume_attachment.jenkins-data-attachment (remote-exec): marking DEVICEEXISTS as NULL
+aws_volume_attachment.jenkins-data-attachment (remote-exec): checking xvdh
+aws_volume_attachment.jenkins-data-attachment (remote-exec): DEVICEEXISTS: 0
+aws_volume_attachment.jenkins-data-attachment (remote-exec): waiting lsblk...
+aws_volume_attachment.jenkins-data-attachment (remote-exec): Sun Mar 15 09:16:21 UTC 2020
+aws_volume_attachment.jenkins-data-attachment (remote-exec): Sun Mar 15 09:16:36 UTC 2020
+aws_volume_attachment.jenkins-data-attachment (remote-exec): marking DEVICEEXISTS as NULL
+aws_volume_attachment.jenkins-data-attachment (remote-exec): checking xvdh
+aws_volume_attachment.jenkins-data-attachment (remote-exec): DEVICEEXISTS: 1
+aws_volume_attachment.jenkins-data-attachment (remote-exec): pvcreate...
+aws_volume_attachment.jenkins-data-attachment (remote-exec):   Physical volume "/dev/xvdh" successfully created
+aws_volume_attachment.jenkins-data-attachment (remote-exec): vgcreate...
+aws_volume_attachment.jenkins-data-attachment (remote-exec):   Volume group "data" successfully created
+aws_volume_attachment.jenkins-data-attachment (remote-exec): lvcreate...
+aws_volume_attachment.jenkins-data-attachment (remote-exec):   Logical volume "volume1" created.
+aws_volume_attachment.jenkins-data-attachment (remote-exec): mkfs.ext4...
+aws_volume_attachment.jenkins-data-attachment (remote-exec): mke2fs 1.42.13 (17-May-2015)
+aws_volume_attachment.jenkins-data-attachment (remote-exec): Creating filesystem with 5241856 4k blocks and 1310720 inodes
+aws_volume_attachment.jenkins-data-attachment (remote-exec): Filesystem UUID: 97534906-b998-4963-af96-8f3b5cff1f89
+aws_volume_attachment.jenkins-data-attachment (remote-exec): Superblock backups stored on blocks:
+aws_volume_attachment.jenkins-data-attachment (remote-exec):    32768, 98304, 163840, 229376, 294912, 819200, 884736, 1605632, 2654208,
+aws_volume_attachment.jenkins-data-attachment (remote-exec):    4096000
+
+aws_volume_attachment.jenkins-data-attachment (remote-exec): Allocating group tables: done
+aws_volume_attachment.jenkins-data-attachment (remote-exec): Writing inode tables: done
+aws_volume_attachment.jenkins-data-attachment (remote-exec): Creating journal (32768 blocks): done
+aws_volume_attachment.jenkins-data-attachment (remote-exec): Writing superblocks and filesystem accounting information: done  
+aws_volume_attachment.jenkins-data-attachment (remote-exec): mkdir...
+aws_volume_attachment.jenkins-data-attachment (remote-exec): fstab...
+aws_volume_attachment.jenkins-data-attachment (remote-exec): mounting...
+aws_volume_attachment.jenkins-data-attachment (remote-exec): mounted...
+aws_volume_attachment.jenkins-data-attachment (remote-exec): Cloud-init v. 0.7.8 running 'modules:final' at Sun, 15 Mar 2020 09:15:50 +0000. Up 13.69 seconds.
+aws_volume_attachment.jenkins-data-attachment (remote-exec): Cloud-init v. 0.7.8 finished at Sun, 15 Mar 2020 09:16:37 +0000. Datasource DataSourceEc2.  Up 60.29 seconds
+aws_volume_attachment.jenkins-data-attachment: Creation complete after 3m35s [id=vai-2020127125]
+
+Apply complete! Resources: 22 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+jenkins-ip = [
+  [
+    "52.211.105.7",
+  ],
+]
+root@VM-101576942:~/git/tf_jenkins_ansible#
