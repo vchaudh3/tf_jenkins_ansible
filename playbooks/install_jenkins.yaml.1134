@@ -1,0 +1,20 @@
+---
+- name: Install Jenkins
+  hosts: ansible
+  gather_facts: false
+  become: true
+  
+  tasks:
+    - name: Start Jenkins on 8081
+      #command: nohup java -jar /usr/share/jenkins/jenkins.war --httpPort=8081 1>/dev/null 2>&1 &
+      become_user: jenkins
+      shell: ( nohup java -jar /usr/share/jenkins/jenkins.war --httpPort=8081 1>/dev/null 2>&1 ) &
+
+    - name: Get init password Jenkins
+      shell: cat /var/lib/jenkins/secrets/initialAdminPassword
+      changed_when: false
+      register: result
+
+    - name: Print init password Jenkins
+      debug:
+        var: result.stdout

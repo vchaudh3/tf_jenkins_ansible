@@ -1,0 +1,14 @@
+---
+- name: Install Oracle Java version 8
+  hosts: ansible
+  become: true
+
+  tasks:
+  - name: Install Java 8
+    become: yes
+    apt:
+      name: "{{ packages }}"
+    vars:
+      packages:
+      - openjdk-8-jdk
+      state: latest
